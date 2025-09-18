@@ -1,0 +1,174 @@
+"main" = "🏠 Home";
+"main_tab" = "Home";
+
+"history" = "📜 History";
+"history_tab" = "History";
+
+"stats" = "📊 Stats";
+"stats_tab" = "Stats";
+
+"reports" = "📑 Reports";
+"reports_tab" = "Reports";
+
+"settings" = "⚙️ Settings";
+"settings_tab" = "Settings";
+
+"add_tab" = "Add";
+
+
+"export_data" = "Export data for the selected period";
+"select_export_format" = "Select Export Format";
+"export_failed" = "Failed to create export file";
+
+"cancel" = "Cancel";
+"error" = "Error";
+
+"total_amount" = "Total Amount";
+"edit" = "Edit";
+"edit_values" = "Edit values";
+
+"car_name" = "Car Name";
+"price" = "Price";
+
+"car_name_empty" = "Car name cannot be empty";
+"price_must_be_number" = "Price must be a number";
+"date_invalid" = "Date cannot be empty or has invalid format";
+"delete" = "Delete";
+"delete_entry" = "Delete Entry";
+"delete_selected" = "Delete selected items";
+"select" = "Select";
+"select_all" = "Select All";
+"confirm_delete" = "Are you sure you want to delete?";
+"dd.MM.yyyy" = "dd.MM.yyyy";
+"date_(dd.mm.yyyy)" = "Date (dd.mm.yyyy)";
+"save" = "Save";
+"yes" = "Yes";
+"error_empty_car" = "You did not enter the make or model of the vehicle";
+"error_price_empty" = "You did not enter the amount";
+"error_source" = "You did not select a source";
+"show_all_items" = "Show all items";
+
+"total_for_the" = "Total for the";
+"filter_day" = "Day";
+"filter_week" = "Week";
+"filter_month" = "Month";
+"paid_for_cell" = "Paid";
+"unPaid_for_cell" = "Unpaid";
+"average_title" = "Avg. per Day";
+
+
+"earn_log" = "🤑 EarnLog 📗";
+"mark_or_model" = "Mark or Model of Automobile";
+"goal_for_the_day" = "🎯 Goal for the day: ";
+
+
+"select_source" = "Choose a workplace";
+"add_new_source" = "+ Add new source...";
+"new_source_message" = "New source of income";
+"new_source_placeholder" = "Enter a new source name";
+
+
+"total" = "Total";
+"primary" = "Primary";
+"part_time" = "Part-time";
+
+
+"icloud_synch" = "iCloud synchronization";
+"icloud_synch_full" = "iCloud Data Synchronization";
+"icloud_synch_description" = "Enable synchronization to keep your data safe and accessible.  
+Your data will be available on all your devices, automatically saved to iCloud, and protected by your Apple ID.";
+
+"edit_part_time_jobs" = "Manage Part-Time Jobs";
+
+"edit_part_time_description" = "In this section, you can manage your list of part-time jobs: add new ones, edit existing entries, and delete those you no longer need.
+✍🏼 To edit a job, double-tap on it to change its name. To delete, swipe the cell to the left";
+
+
+"deleted" = "(deleted)";
+
+"archive_data" = "Archive Data";
+
+"archive_data_description" = "Here you can access the full archive of your entries. 
+ Open the desired period to view all saved data, or use the export function to create a file that can be stored on your device or sent by email.
+⚠️ Note: archive data is read-only and cannot be modified. 
+ Data from the previous month is archived automatically at the beginning of each new month and appears here.
+ ⁉️ If you had entries in the previous month but no archive is visible, please contact the developer.";
+"month" = "month";
+"total_orders_completed" = "Total orders completed: ";
+
+"delete_old_items" = "Delete old items";  
+"delete_old_items_description" = "On this screen you can delete all records from previous months, except the current one.
+Before deleting, it is strongly recommended to make sure the necessary data is saved in the archive (in a separate section of the app).
+This feature is designed to optimize the app's performance: removing old !archived! data helps free up space and improve performance.
+⚠️ Important: this action is irreversible — once deleted, the data cannot be recovered.";
+
+"chek_archives" = "Chek archives";
+
+"operation_result" = "Operation Result";
+"operation_success" = "✅ All done successfully!";
+"operation_failed" = "❌ Something went wrong";
+
+"paid_for_alert" = "✅ Paid";
+"unpaid_for_alert" = "❌ Unpaid";
+
+"change_pay_status" = "Change Status Pay";
+"change_status_selected_all" = "Select a new status. It will be applied to all selected items.";
+"change_status_select_one" = "Select a new status for this item.";
+"data_for" = "Data for";
+
+"new_sidejob" = "New part-time job";
+"not_fined_archives" = "📭 No archive files found. They may not have been created yet.";
+
+"title_for_archive_file" = "Archive data for";
+"title_for_export_file" = "Export data for";
+
+
+"date" = "Date";
+"make" = "Task";
+"price" = "Price";
+"status_pay" = "Status Pay";
+"source" = "Source";
+"total_count_amount" = "Total count and amount";
+
+
+"locale" = "en_US";
+
+"january" = "January";
+"february" = "February";
+"march" = "March";
+"april" = "April";
+"may" = "May";
+"june" = "June";
+"july" = "July";
+"august" = "August";
+"september" = "September";
+"october" = "October";
+"november" = "November";
+"december" = "December";
+
+"total_count" = "Total Count";
+"total_volume" = "Total Volume";
+"calculated_volume" = "Calculated Volume";
+"uncalculated_volume" = "Uncalculated Volume";
+
+"error_create_folder" = "Failed to create folder";
+"error_encode_data" = "Data encoding error";
+"error_create_file" = "Failed to create file";
+"error_no_data" = "No data to export";
+
+
+
+
+
+
+
+
+
+"morning_greeting" = "Good morning ☀️";
+"afternoon_greeting" = "Good afternoon 🌤";
+"evening_greeting" = "Good evening ✨";
+"night_greeting" = "Good night 🌙";
+
+
+"income_breakdown" = "Income Breakdown";
+"view" = "View";

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Vt3-IW-gKT">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment version="5632" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="yq3-8h-Bw7">
+            <objects>
+                <viewController id="Vt3-IW-gKT" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YWC-LN-h2N">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="3x_Light_splash screen" translatesAutoresizingMaskIntoConstraints="NO" id="vCo-sH-Cdp">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo 1024 white" translatesAutoresizingMaskIntoConstraints="NO" id="t87-Vp-yTy">
+                                <rect key="frame" x="121" y="293" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="HFJ-aV-Uhc"/>
+                                    <constraint firstAttribute="width" constant="150" id="Tnc-aE-wFh"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Zue-aD-SON"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="vCo-sH-Cdp" secondAttribute="bottom" id="8Ge-ZC-MqV"/>
+                            <constraint firstItem="vCo-sH-Cdp" firstAttribute="leading" secondItem="Zue-aD-SON" secondAttribute="leading" id="G8t-aj-Szs"/>
+                            <constraint firstItem="t87-Vp-yTy" firstAttribute="top" secondItem="Zue-aD-SON" secondAttribute="top" constant="175" id="HD4-yj-7Sb"/>
+                            <constraint firstItem="Zue-aD-SON" firstAttribute="trailing" secondItem="t87-Vp-yTy" secondAttribute="trailing" constant="122" id="YVU-8s-xlV"/>
+                            <constraint firstItem="Zue-aD-SON" firstAttribute="bottom" secondItem="t87-Vp-yTy" secondAttribute="bottom" constant="341" id="b2L-U1-CYV"/>
+                            <constraint firstItem="t87-Vp-yTy" firstAttribute="leading" secondItem="Zue-aD-SON" secondAttribute="leading" constant="121" id="cdb-Ue-nHR"/>
+                            <constraint firstItem="vCo-sH-Cdp" firstAttribute="top" secondItem="YWC-LN-h2N" secondAttribute="top" id="fvS-bw-FSs"/>
+                            <constraint firstItem="vCo-sH-Cdp" firstAttribute="trailing" secondItem="Zue-aD-SON" secondAttribute="trailing" id="jjo-TT-eSi"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="PPA-8v-UjU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="72.51908396946564" y="-232.3943661971831"/>
+        </scene>
+    </scenes>
+    <color key="tintColor" name="designPrimaryColor"/>
+    <resources>
+        <image name="3x_Light_splash screen" width="1125" height="2436"/>
+        <image name="Logo 1024 white" width="213" height="213"/>
+        <namedColor name="designPrimaryColor">
+            <color red="0.059000000357627869" green="0.50199997425079346" blue="0.27500000596046448" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
