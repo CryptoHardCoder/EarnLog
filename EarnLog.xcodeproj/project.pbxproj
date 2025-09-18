@@ -21,6 +21,7 @@
 		FB17C4832E36180F000F999C /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB17C47E2E36180F000F999C /* TabBarController.swift */; };
 		FB17C4902E3653F3000F999C /* ArchiveMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB17C48F2E3653F3000F999C /* ArchiveMetadata.swift */; };
 		FB17C4922E3654F3000F999C /* ArchiveTestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB17C4912E3654F3000F999C /* ArchiveTestViewController.swift */; };
+		FB17E9362E7C771B009CF588 /* AppCoreServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB17E9352E7C771B009CF588 /* AppCoreServices.swift */; };
 		FB2169EE2E4CE15500C8629F /* PartTimeJobsSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2169ED2E4CE15500C8629F /* PartTimeJobsSettingsViewModel.swift */; };
 		FB2362672E68A347009A4B0B /* SemicircleProgressChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2362662E68A347009A4B0B /* SemicircleProgressChart.swift */; };
 		FB2E27F22E4F974E000A87D6 /* ArchivesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB2E27F12E4F974E000A87D6 /* ArchivesViewController.swift */; };
@@ -115,6 +116,7 @@
 		FB17C47E2E36180F000F999C /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		FB17C48F2E3653F3000F999C /* ArchiveMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveMetadata.swift; sourceTree = "<group>"; };
 		FB17C4912E3654F3000F999C /* ArchiveTestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveTestViewController.swift; sourceTree = "<group>"; };
+		FB17E9352E7C771B009CF588 /* AppCoreServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoreServices.swift; sourceTree = "<group>"; };
 		FB2169ED2E4CE15500C8629F /* PartTimeJobsSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartTimeJobsSettingsViewModel.swift; sourceTree = "<group>"; };
 		FB2362662E68A347009A4B0B /* SemicircleProgressChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemicircleProgressChart.swift; sourceTree = "<group>"; };
 		FB2E27F12E4F974E000A87D6 /* ArchivesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivesViewController.swift; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		FB3144202E79E3F700FC90BB /* DataManagers */ = {
 			isa = PBXGroup;
 			children = (
+				FB17E9352E7C771B009CF588 /* AppCoreServices.swift */,
 				FB6A7FBE2E60D31C0087D32A /* UniversalDataService.swift */,
 				FB0D1DAA2E357B2F00C1D165 /* ArchiveManager.swift */,
 				FB3144252E79F75900FC90BB /* StatisticsCalculator.swift */,
@@ -554,6 +557,7 @@
 				FB2E27F82E4FE35B000A87D6 /* ArchiveReviewViewModel.swift in Sources */,
 				FB6A7FB12E60C7FE0087D32A /* FileFormat.swift in Sources */,
 				FBCFE2262E3ABB8000CCB640 /* MyHistoryViewController.swift in Sources */,
+				FB17E9362E7C771B009CF588 /* AppCoreServices.swift in Sources */,
 				FB6A7FBF2E60D31C0087D32A /* UniversalDataService.swift in Sources */,
 				FB30518E2E36B9B800F1CCB5 /* String + ext.swift in Sources */,
 				FB36BCED2E4BD61200AA2E68 /* IcloudSettingViewController.swift in Sources */,
@@ -633,7 +637,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -675,7 +679,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

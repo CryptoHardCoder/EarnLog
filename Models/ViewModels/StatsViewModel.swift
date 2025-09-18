@@ -12,14 +12,16 @@ class StatsViewModel: MemoryTrackable{
     
     var groupedItems = [DailyTotal]()
     
-    private let statsManager = StatisticsCalculator.shared
+    private let statsManager = AppCoreServices.shared.statisticsCalculator
     
-    private let dataFilter = DataFilter.shared
+    private let dataFilter = AppCoreServices.shared.dataFilter
+    
+    private let appFileManager = AppCoreServices.shared.appFileManager
     
 //    var filteredItemsWithSource: [IncomeEntry] = []
     
     var sources: [IncomeSource] {
-        AppFileManager.shared.sources
+        appFileManager.sources
     }
     
     var source: IncomeSource? = nil

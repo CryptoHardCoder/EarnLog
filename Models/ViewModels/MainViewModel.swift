@@ -18,8 +18,8 @@
 import Foundation
 
 final class MainViewModel: MemoryTrackable {
-    private let dataManager = AppFileManager.shared
-    private let statsManager = StatisticsCalculator.shared
+    private let dataManager = AppCoreServices.shared.appFileManager
+    private let statsManager = AppCoreServices.shared.statisticsCalculator
     private let dayPeriod = DayPeriod.fromNow()
     
     var lastMonthEntries: [IncomeEntry] {

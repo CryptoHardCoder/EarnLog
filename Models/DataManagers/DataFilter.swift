@@ -9,16 +9,14 @@ import Foundation
 
 final class DataFilter {
     
-    static let shared = DataFilter()
-    
     private var allItems: [IncomeEntry] {
         dataProvider.getAllItems()
     }
     
     private let dataProvider: DataProvider
     
-    private init(){
-        self.dataProvider = AppFileManager.shared
+    init(dataProvider: DataProvider){
+        self.dataProvider = dataProvider
     }
     
     

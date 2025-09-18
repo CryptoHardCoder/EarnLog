@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
         
 //        print("🚀 Приложение запускается - проверяем необходимость CSV архивации")
-        ArchiveManager.shared.checkArchiveOnAppStart()
+        AppCoreServices.shared.archiveManager.checkArchiveOnAppStart()
         
     }
 
@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
 //        print("📱 Приложение стало активным - проверяем дату для CSV архивации")
-        ArchiveManager.shared.checkArchiveOnAppStart()
+        AppCoreServices.shared.archiveManager.checkArchiveOnAppStart()
     }
 
 }

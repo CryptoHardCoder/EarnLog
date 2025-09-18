@@ -2,8 +2,8 @@ import Foundation
 
 final class ArchivesViewModel: MemoryTrackable {
     
-    private let fileManager = AppFileManager.shared
-    private let archiveManager = ArchiveManager.shared
+    private let fileManager = AppCoreServices.shared.appFileManager
+    private let archiveManager =  AppCoreServices.shared.archiveManager
     // Приватные свойства для контроля обновления данных
     private var _archivesMetadata: [ArchiveMetadata] = []
     private var _archiveFiles: [String] = []

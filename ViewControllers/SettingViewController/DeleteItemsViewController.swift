@@ -94,7 +94,7 @@ final class DeleteItemsViewController: UIViewController, MemoryTrackable{
         let alertController = UIAlertController(title: "delete_entry".localized, message: "confirm_delete".localized, preferredStyle: .alert)
         
         alertController.addAction(UIAlertAction(title: "yes".localized, style: .destructive) { _ in
-            let result = AppFileManager.shared.deletePreviousMonthItems()
+            let result = AppCoreServices.shared.appFileManager.deletePreviousMonthItems()
             self.showResultAlert(result: result) 
         })
         

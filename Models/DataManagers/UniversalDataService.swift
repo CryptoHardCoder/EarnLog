@@ -3,22 +3,22 @@
 //  EarnLog
 //
 //  Created by M3 pro on 28/08/2025.
-//
-
-
 import Foundation
 import UIKit
 import PDFKit
 
 // MARK: - Универсальный сервис обработки данных
 class UniversalDataService {
-    private let appFileManager = AppFileManager.shared
     private let fileManager = FileManager.default
     private var currentOperation: DataOperation = .export
-    private let appPaths = AppPaths.shared
-    
+    private let appFileManager: AppFileManager
+    private let appPaths: AppPaths  
     // Инициализация с базовым путем
-    init() {}
+    init(appFileManager: AppFileManager, appPaths: AppPaths){
+        self.appFileManager = appFileManager
+        self.appPaths = appPaths
+        
+    }
     
     // Получение папок для текущей операции
     private func getFolders(for operation: DataOperation) -> (main: URL, backup: URL) {
@@ -55,9 +55,7 @@ class UniversalDataService {
             return processToPDF(context: context, folders: folders)
         }
     }
-    
-    // Остальные методы остаются практически теми же, только меняем названия папок...
-    
+
     // MARK: - Обработка в CSV
     private func processToCSV<T: Exportable>(
         context: DataProcessingContext<T>, 
@@ -195,6 +193,23 @@ class UniversalDataService {
             return "\"\(escapedField)\""
         }
         return "\"\(field)\""
+    }
+
+    // Экспорт данных
+    func exportData<T: Exportable>(_ items: [T], format: FileFormat, period: TimeFilter) -> URL? {
+        let config = FileProcessingConfiguration.defaultExport
+        let context = DataProcessingContext(items: items, configuration: config, period: period)
+        
+        let result = processData(context: context, to: format)
+        
+        switch result {
+        case .success(let url):
+            print("✅ Экспорт успешен: \(url)")
+            return url
+        case .failure(let error):
+            print("❌ Ошибка экспорта: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
 

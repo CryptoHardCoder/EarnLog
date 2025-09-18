@@ -6,14 +6,12 @@
 //
 import Foundation
 
-struct AppPaths {
-    static let shared = AppPaths()
-    
+struct AppPaths {    
     let hiddenFolder: URL
     let userAccessibleFolder: URL
     let myApplicationSupportFilesFolderURL: URL
     
-    private init() {
+    init() {
         self.hiddenFolder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         self.userAccessibleFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         self.myApplicationSupportFilesFolderURL = hiddenFolder.appending(path: "My Application Support Files")

@@ -9,12 +9,6 @@ import UIKit
 
 class AppFileManager: MemoryTrackable {
     
-    static let shared = AppFileManager()
-    
-    private lazy var dataService = UniversalDataService()
-    
-    private let appPaths = AppPaths.shared 
-    
     private var saveWorkItem: DispatchWorkItem?
     
     private let jsonFileName = "allItems.json"
@@ -39,23 +33,11 @@ class AppFileManager: MemoryTrackable {
     private lazy var hiddenFolder = appPaths.hiddenFolder
     private lazy var userAccessibleFolder = appPaths.userAccessibleFolder
     private lazy var myApplicationSupportFilesFolderURL = appPaths.myApplicationSupportFilesFolderURL
-//    private var jsonFileURL: URL {
-//        myApplicationSupportFilesFolderURL.appending(path: jsonFileName)
-//    }
-//    var hiddenFolder: URL {
-//        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-//    }
-//    
-//    var userAccessibleFolder: URL {
-//        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//    }
-//    
-//    var myApplicationSupportFilesFolderURL: URL {
-//        hiddenFolder.appending(path: myApplicationSupportFilesFolder)
-//    }
-       
     
-    private init() {
+    private let appPaths: AppPaths
+    
+    init(appPaths: AppPaths) {
+        self.appPaths = appPaths
         trackCreation()
         ensureFoldersExist()
         checkAllItems()
@@ -168,24 +150,6 @@ class AppFileManager: MemoryTrackable {
         }
         print("📂 jsonFileURL:", jsonFileURL.path)
     }
-    
-
-    // Экспорт данных
-    func exportData<T: Exportable>(_ items: [T], format: FileFormat, period: TimeFilter) -> URL? {
-        let config = FileProcessingConfiguration.defaultExport
-        let context = DataProcessingContext(items: items, configuration: config, period: period)
-        
-        let result = dataService.processData(context: context, to: format)
-        
-        switch result {
-        case .success(let url):
-            print("✅ Экспорт успешен: \(url)")
-            return url
-        case .failure(let error):
-            print("❌ Ошибка экспорта: \(error.localizedDescription)")
-            return nil
-        }
-    }
         
     func createSampleData() {
         let calendar = Calendar.current
@@ -287,7 +251,7 @@ extension AppFileManager: DataProvider{
     
     
     func saveItems() {
-        ensureFoldersExist() // ✅ создаём папки, если их нет
+        ensureFoldersExist()
         // Отменяем предыдущее сохранение
 //        saveWorkItem?.cancel()
         

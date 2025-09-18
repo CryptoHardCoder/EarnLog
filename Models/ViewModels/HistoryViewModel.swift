@@ -14,9 +14,10 @@ class HistoryViewModel: MemoryTrackable{
     private(set) var filteredEntries: [IncomeEntry] = [] // Только для чтения извне
     private var currentFilterInterval: TimeFilter = .day
     
-    private let statsManager = StatisticsCalculator.shared
-    private let dataFilter = DataFilter.shared
-    private let fileManager = AppFileManager.shared
+    private let statsManager = AppCoreServices.shared.statisticsCalculator
+    private let dataFilter = AppCoreServices.shared.dataFilter
+    private let dataService = AppCoreServices.shared.dataService
+    private let fileManager = AppCoreServices.shared.appFileManager
     
     var onDataChanged: (() -> Void)?
     var exportFile: (() -> Void)?
@@ -47,9 +48,9 @@ class HistoryViewModel: MemoryTrackable{
         
         switch format {
         case .csv:
-                fileURL = fileManager.exportData(filteredEntries, format: .csv, period: currentFilterInterval)
+                fileURL = dataService.exportData(filteredEntries, format: .csv, period: currentFilterInterval)
             case .pdf:
-            fileURL = fileManager.exportData(filteredEntries, format: .pdf, period: currentFilterInterval)
+            fileURL = dataService.exportData(filteredEntries, format: .pdf, period: currentFilterInterval)
         }
 
         guard let url = fileURL else {
@@ -92,7 +93,7 @@ class HistoryViewModel: MemoryTrackable{
     
     func updateItem(entryId: UUID? = nil, entiresIds: [UUID]? = nil, entryCar: String? = nil, entryPrice: Double? = nil, 
                     entryDate: Date? = nil, newStatus: Bool? = nil, entrySource: IncomeSource? = nil){
-        AppFileManager.shared.updateItem(for: entryId,
+        fileManager.updateItem(for: entryId,
                                          for: entiresIds,
                                          newCar: entryCar,
                                          newPrice: entryPrice,
@@ -105,7 +106,7 @@ class HistoryViewModel: MemoryTrackable{
     
     
     func deleteItem(entryId: UUID){
-        AppFileManager.shared.deleteItem(withId: entryId)
+        fileManager.deleteItem(withId: entryId)
 //        NotificationCenter.default.post(name: .dataDidUpdate, object: nil)
     }
     

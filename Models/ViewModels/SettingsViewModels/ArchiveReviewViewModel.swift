@@ -9,9 +9,9 @@ import Foundation
 
 final class ArchiveReviewViewModel: MemoryTrackable {
     
-    private let fileManager = AppFileManager.shared
-    private let archiveManager = ArchiveManager.shared
-    private let statsManager = StatisticsCalculator.shared
+    private let fileManager = AppCoreServices.shared.appFileManager
+    private let archiveManager = AppCoreServices.shared.archiveManager
+    private let statsManager = AppCoreServices.shared.statisticsCalculator
     
     private let year: Int
     private let month: Int

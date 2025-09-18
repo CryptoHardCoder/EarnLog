@@ -10,14 +10,8 @@ import PDFKit
 // MARK: - Расширение AppFileManager для CSV архивации
 class ArchiveManager: MemoryTrackable {
     
-    static let shared = ArchiveManager()
-    
-    private let dataService = UniversalDataService()
-    
     private let fileManager = FileManager.default
     
-    private let appPaths = AppPaths.shared
-     
     // MARK: - Константы для файлов
     private lazy var csvArchivesFolderURL = appPaths.operationFolder(for: .archive)
     
@@ -39,9 +33,13 @@ class ArchiveManager: MemoryTrackable {
     private var archiveMetadataFileName = "Archive Metadata.json"
     
     private let dataProvider: DataProvider
+    private let appPaths: AppPaths
+    private let dataService: UniversalDataService
     
-    private init() {
-        self.dataProvider = AppFileManager.shared
+    init(fileManager: DataProvider, appPaths: AppPaths, dataService: UniversalDataService) {
+        self.dataProvider = fileManager
+        self.appPaths = appPaths
+        self.dataService = dataService
         trackCreation()
     }
     
@@ -51,7 +49,7 @@ class ArchiveManager: MemoryTrackable {
         if !fileManager.fileExists(atPath: existURL.path) {
             do {
                 try fileManager.createDirectory(at: existURL, withIntermediateDirectories: true)
-//                print("📁 Создана папка для CSV архивов: \(csvArchivesFolderURL.path)")
+                print("📁 Создана папка для CSV архивов: \(csvArchivesFolderURL.path)")
             } catch {
                 print("❌ Ошибка создания папки архивов: \(error)")
             }
@@ -554,49 +552,10 @@ class ArchiveManager: MemoryTrackable {
             return try JSONDecoder().decode([ArchiveMetadata].self, from: data)
         } catch {
             print("📂 Файл метаданных не найден или пуст")
+            ensureCSVArchivesFolderExists(existURL: archiveMetadataFileURL)
             return []
         }
     }
-    
-//    // MARK: - Получение данных для отображения
-//    
-//    /// Получает товары за конкретный месяц и год (из CSV архива или текущих данных)
-//    func getItemsForMonthPDF(year: Int, month: Int) -> [IncomeEntry] {
-//        let calendar = Calendar.current
-//        let now = Date()
-//        let currentMonth = calendar.component(.month, from: now)
-//        let currentYear = calendar.component(.year, from: now)
-//
-//        let allItems = AppFileManager.shared.allItems
-//        let metadata = loadArchiveMetadata()
-//        let targetMetadata = metadata.first(where: { $0.year == year && $0.month == month })
-//
-//        // Фильтруем данные из памяти
-//        let dataFromMemory = allItems.filter {
-//            calendar.component(.year, from: $0.date) == year &&
-//            calendar.component(.month, from: $0.date) == month
-//        }
-//
-//        var result: [IncomeEntry] = []
-//
-//        if year == currentYear && month == currentMonth {
-//            // ✅ Текущий месяц: сначала добавляем из памяти
-//            result.append(contentsOf: dataFromMemory)
-//        }
-//
-//        // ✅ Если нашли метаданные архива, подгружаем CSV
-//        if let targetMetadata = targetMetadata {
-//            let dataFromFile = loadItemsFromCSV(fileName: targetMetadata.fileName)
-//            result.append(contentsOf: dataFromFile)
-//        } else {
-//            print("❌ Архив за \(month).\(year) не найден")
-//        }
-//
-//        // ✅ Убираем дубликаты (если один и тот же item оказался в памяти и архиве)
-//        let uniqueItems = Array(Set(result)) // при условии, что IncomeEntry: Hashable
-//        return uniqueItems.sorted { $0.date > $1.date } // сортировка по дате (новые сверху)
-//    }
-    
     
     /// Получает список всех доступных месяцев
     func getAvailableMonths() -> [(year: Int, month: Int, displayName: String)] {

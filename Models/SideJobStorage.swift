@@ -17,6 +17,8 @@ class SideJobStorage: MemoryTrackable{
     
     private var allCustomJobs = [IncomeSource.SideJob]()
     
+    private let appCoreServices = AppCoreServices.shared
+    
     private init() {
         if loadAllCustomJobs().isEmpty {
 //            createExampleJobsIfNeeded()
@@ -115,7 +117,7 @@ class SideJobStorage: MemoryTrackable{
             allSideJobs[index].name = newName
             saveCustomJobs(jobs: allSideJobs)
 //            AppFileManager.shared.updateSideJobInfo(sideJobId: id)
-            AppFileManager.shared.updateSideJobInfo(updatedJob: allSideJobs[index])
+                appCoreServices.appFileManager.updateSideJobInfo(updatedJob: allSideJobs[index])
 //            print("✅ Изменено название подработки: \(newName)")
         } else {
             print("❌ Подработка с id \(editingJobId) не найдена")
@@ -134,7 +136,7 @@ class SideJobStorage: MemoryTrackable{
             allSideJobs[index].isActive = false
             saveCustomJobs(jobs: allSideJobs)
 //            AppFileManager.shared.updateSideJobInfo(sideJobId: id)
-            AppFileManager.shared.updateSideJobInfo(updatedJob: allSideJobs[index])
+            appCoreServices.appFileManager.updateSideJobInfo(updatedJob: allSideJobs[index])
 //            print(allSideJobs)
 //            print("✅ Подработка '\(allSideJobs[index].name)' помечена как неактивная")
 //            print(allSideJobs)
