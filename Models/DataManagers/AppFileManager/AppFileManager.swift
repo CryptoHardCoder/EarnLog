@@ -32,14 +32,14 @@ class AppFileManager: MemoryTrackable {
     private lazy var jsonFileURL = appPaths.jsonFileURL(fileName: jsonFileName)
     private lazy var hiddenFolder = appPaths.hiddenFolder
     private lazy var userAccessibleFolder = appPaths.userAccessibleFolder
-    private lazy var myApplicationSupportFilesFolderURL = appPaths.myApplicationSupportFilesFolderURL
+    private lazy var myApplicationSupportFilesFolder = appPaths.myApplicationSupportFilesFolderURL
     
     private let appPaths: AppPaths
     
     init(appPaths: AppPaths) {
         self.appPaths = appPaths
         trackCreation()
-        ensureFoldersExist()
+        let _ = ensureFoldersExist()
         checkAllItems()
     }
     
@@ -62,18 +62,21 @@ class AppFileManager: MemoryTrackable {
             }
         }
     }
-    
-    func ensureFoldersExist() {
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: hiddenFolder.path) {
-            try? fileManager.createDirectory(at: hiddenFolder, withIntermediateDirectories: true)
+
+    func ensureFoldersExist() -> AppFileManagerResult<Void> {
+        let foldersToCreate = [hiddenFolder, userAccessibleFolder, myApplicationSupportFilesFolder]
+        
+        for folderName in foldersToCreate {
+            if !fileManager.fileExists(atPath: folderName.path) {
+                do{
+                    try fileManager.createDirectory(atPath: folderName.path, 
+                                                    withIntermediateDirectories: true)
+                } catch {
+                    return .failure(.folderCreationFailed(path: folderName.path))
+                }
+            }
         }
-        if !fileManager.fileExists(atPath: userAccessibleFolder.path) {
-            try? fileManager.createDirectory(at: userAccessibleFolder, withIntermediateDirectories: true)
-        }
-        if !fileManager.fileExists(atPath: myApplicationSupportFilesFolderURL.path) {
-            try? fileManager.createDirectory(at: myApplicationSupportFilesFolderURL, withIntermediateDirectories: true)
-        }
+        return .success(())
     }
     
     func deletePreviousMonthItems() -> Bool {
@@ -86,7 +89,7 @@ class AppFileManager: MemoryTrackable {
         allItems.removeAll { item in
             return item.date < startOfMonth
         }
-        saveItems()
+        let _ = saveItems()
         return true
         
     }
@@ -111,44 +114,49 @@ class AppFileManager: MemoryTrackable {
                 allItems[i].source = .sideJob(updatedJob)
             }
         }
-        saveItems()
+        let _ = saveItems()
         
     }
     
 
     
-    private func performSave() {
+    private func performSave() -> AppFileManagerResult<Void> {
+        
+        switch ensureFoldersExist(){
+            case .failure(let error): 
+                return .failure(error)
+            case .success(()):
+                break
+        }
+        
         do {
-            try fileManager.createDirectory(at: myApplicationSupportFilesFolderURL,
-                                           withIntermediateDirectories: true, 
-                                            attributes: nil)
             let data = try JSONEncoder().encode(allItems)
             try data.write(to: jsonFileURL)
-            
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: .dataDidUpdate, object: nil)
-            }
+            return .success(())
+        } catch let encodingError as EncodingError{
+            return .failure(.jsonError(.encoding))
         } catch {
-            //TODO: создать енум для таких серьезных ошибок
-            // Логирование ошибки
-            print("Save error: \(error)")
+            return .failure(.jsonError(.decoding))
         }
+        
     }
     
-    func loadItemsFromJSONFile() {
+    func loadItemsFromJSONFile() -> AppFileManagerResult<[IncomeEntry]> {
         guard fileManager.fileExists(atPath: jsonFileURL.path) else {
-            print("Файл не найден, создаём sampleData")
-            createSampleData()
-            return
+            return .failure(.fileNotFound(name: jsonFileName))
         }
+        
         do {
             let data = try Data(contentsOf: jsonFileURL)
-            allItems = try JSONDecoder().decode([IncomeEntry].self, from: data)
+            let items = try JSONDecoder().decode([IncomeEntry].self, from: data)
+            allItems = items
+            return .success(items)
+        } catch let decodingError as DecodingError {
+            return .failure(.jsonError(.decoding))
         } catch {
-            print("Ошибка при загрузке JSON: \(error)")
-            createSampleData()
+            return .failure(.loadError(underlying: error))
         }
-        print("📂 jsonFileURL:", jsonFileURL.path)
+//        print("📂 jsonFileURL:", jsonFileURL.path)
     }
         
     func createSampleData() {
@@ -178,26 +186,41 @@ class AppFileManager: MemoryTrackable {
             IncomeEntry(date: calendar.date(byAdding: .day, value: -6, to: nowDate)!, car: "Excample", price: 900, isPaid: false, source: .sideJob(customJob))
         ]
         
-        saveItems()
+        let _ = saveItems()
     }
     
    
     
     /// Загружает данные или создаёт тестовые, если файл пустой/не существует.
     /// Выполняется в фоне, а по завершении вызывает completion на главном потоке.
-    func loadOrCreateInBackground(completion: @escaping () -> Void) {
-        DispatchQueue.global(qos: .background).async {
-            self.loadItemsFromJSONFile()
+    func loadOrCreateInBackground(completion: @escaping (AppFileManagerResult<[IncomeEntry]>) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
             
-            if self.getAllItems().isEmpty {
-                self.createSampleData()
-                self.loadItemsFromJSONFile()
+            let loadResult = self.loadItemsFromJSONFile()
+            
+            let finalResult: AppFileManagerResult<[IncomeEntry]>
+            
+            switch loadResult {
+                case .success(let items):
+                    if items.isEmpty {
+                        self.createSampleData()
+                        finalResult = .success(self.allItems)
+                    } else {
+                        finalResult = .success(items)
+                    }
+                    
+                case .failure(.fileNotFound):
+                    self.createSampleData()
+                    finalResult = .success(self.allItems)
+                case .failure(let error): 
+                    finalResult = .failure(error)
             }
             
             // Сообщим UI, что данные обновились
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: .dataDidUpdate, object: nil)
-                completion()
+                completion(finalResult)
             }
         }
     }
@@ -209,58 +232,91 @@ class AppFileManager: MemoryTrackable {
     
 }
 
+//MARK: Confirm protocol DataProvider
 extension AppFileManager: DataProvider{
-    
-    func getAllItems() -> [IncomeEntry] {
-        return allItems
+
+    func getAllItems() -> AppFileManagerResult<[IncomeEntry]> {
+        return .success(allItems)
     }
     
-    func addNewItem(_ item: IncomeEntry) {
+    func addNewItem(_ item: IncomeEntry) -> AppFileManagerResult<Void> {
         allItems.append(item)
-        saveItems()
-//        print(allItems)
+        let saveResult = saveItems()
+        return saveResult
     }
     
-    func deleteItem (withId id: UUID){
-        allItems.removeAll { $0.id == id }
-        saveItems()
+    func deleteItem (withId id: UUID) -> AppFileManagerResult<Void> {
+        guard let index = allItems.firstIndex(where: { $0.id == id }) else {
+            return .failure(.itemNotFound(id: id))
+        }
+        
+        allItems.remove(at: index)
+        let saveResult = saveItems()
+        return saveResult
     }
     
-    func updateItem(for id: UUID? = nil, for ids: [UUID]? = nil, newCar: String? = nil, newPrice: Double? = nil, newDate: Date? = nil, newStatus: Bool? = nil, newSource: IncomeSource? = nil) {
+    func updateItem(
+        for id: UUID? = nil,
+        for ids: [UUID]? = nil,
+        newCar: String? = nil,
+        newPrice: Double? = nil,
+        newDate: Date? = nil,
+        newStatus: Bool? = nil,
+        newSource: IncomeSource? = nil
+    ) -> AppFileManagerResult<Void> {
+        // Собираем список ID для обновления
+        let targetIds: [UUID]
         
         if let singleId = id {
-//            print("change singleId")
-            // Обновляем один элемент
-            guard let index = allItems.firstIndex(where: { $0.id == singleId }) else { return }
-            updateItemAt(index: index, newCar: newCar, newPrice: newPrice, newDate: newDate, newStatus: newStatus, newSource: newSource)
-            
+            targetIds = [singleId]
         } else if let multipleIds = ids {
-            // Обновляем несколько элементов
-//            print("change multipleIds")
-            for itemId in multipleIds {
-                guard let index = allItems.firstIndex(where: { $0.id == itemId }) else { 
-                    continue // ❌ Пропускаем не найденный ID, продолжаем со следующим
-                }
-                updateItemAt(index: index, newCar: newCar, newPrice: newPrice, newDate: newDate, newStatus: newStatus, newSource: newSource)
+            targetIds = multipleIds
+        } else {
+            return .failure(.invalidData)
+        }
+        
+        for itemId in targetIds {
+            if let index = allItems.firstIndex(where: { $0.id == itemId }) {
+                updateItemAt(
+                    index: index,
+                    newCar: newCar,
+                    newPrice: newPrice,
+                    newDate: newDate,
+                    newStatus: newStatus,
+                    newSource: newSource
+                )
+            } else {
+                return .failure(.itemNotFound(id: itemId))
+            }
+        }
+        // Сохраняем и уведомляем один раз в конце
+        let saveResult = saveItems()
+        return saveResult
+    }
+    
+    
+    func saveItems() -> AppFileManagerResult<Void> {
+        // Отменяем предыдущее отложенное сохранение
+        saveWorkItem?.cancel()
+        
+        // Создаем новую задачу с weak self для избежания retain cycle
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            let _ = self.performSave()
+            
+            // Уведомляем UI об изменениях после сохранения
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .dataDidUpdate, object: nil)
             }
         }
         
-        // Сохраняем и уведомляем один раз в конце
-        saveItems()
-    }
-    
-    
-    func saveItems() {
-        ensureFoldersExist()
-        // Отменяем предыдущее сохранение
-//        saveWorkItem?.cancel()
+        saveWorkItem = workItem
         
-        saveWorkItem = DispatchWorkItem { [weak self] in
-            self?.performSave()
-        }
+        // Запускаем отложенное сохранение
+        DispatchQueue.global(qos: .background).async(execute: workItem)
         
-        // Задержка для группировки частых изменений
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: saveWorkItem!)
+        // Возвращаем успех, так как сохранение запланировано
+        return .success(())
     }
 
 }

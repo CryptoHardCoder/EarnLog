@@ -9,16 +9,16 @@ import Foundation
 
 protocol DataProvider {
     
-    func getAllItems() -> [IncomeEntry]
+    func getAllItems() -> AppFileManagerResult<[IncomeEntry]> 
     
-    func addNewItem(_ item: IncomeEntry)
+    func addNewItem(_ item: IncomeEntry) -> AppFileManagerResult<Void>
     
-    func deleteItem (withId id: UUID)
+    func deleteItem (withId id: UUID) -> AppFileManagerResult<Void>
     
-    func updateItem(for id: UUID?, for ids: [UUID]?, newCar: String?, newPrice: Double?, newDate: Date?, newStatus: Bool?, newSource: IncomeSource?)
+    func updateItem(for id: UUID?, for ids: [UUID]?, newCar: String?, newPrice: Double?, newDate: Date?, newStatus: Bool?, newSource: IncomeSource?) -> AppFileManagerResult<Void>
     
     
-    func saveItems()
+    func saveItems() -> AppFileManagerResult<Void>
     
     
     
