@@ -26,7 +26,7 @@ func createCSVContent(
     
     for item in items {
         let date = dateFormatter.string(from: item.date)
-        let make = escapeCSVField(item.car)
+        let make = escapeCSVField(item.jobDescription ?? "")
         let price = String(format: "%.2f", item.price)
         let statusPaid = item.isPaid ? "paid_for_cell".localized : "unPaid_for_cell".localized
         let source = escapeCSVField(item.source.displayName)
