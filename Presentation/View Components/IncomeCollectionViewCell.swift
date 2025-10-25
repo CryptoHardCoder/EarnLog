@@ -10,7 +10,6 @@ import UIKit
 
 class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     static let reuseIdentifier = "IncomeCollectionViewCell"
-//    var hasAnimated = false
 
     private let dateLabel = UILabel()
     private let jobIdentityLabel = UILabel()
@@ -36,10 +35,10 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     private func setupViews() {
         backgroundColor = .itemsBackground
         layer.cornerRadius = 20
-//        layer.shadowColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
-//        layer.shadowOpacity = 0.3
-//        layer.shadowRadius = 4
-//        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
+        layer.shadowOpacity = 0.5
+        layer.shadowRadius = 4
+        layer.shadowOffset = CGSize(width: 0, height: 2)
         
         checkmarkButton.setImage(UIImage(systemName: "circle"), for: .normal)
         checkmarkButton.setImage(UIImage(systemName: "checkmark.circle.fill"), for: .selected)
@@ -63,7 +62,6 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         
         statusPaymentLabel.font = .systemFont(ofSize: 12)
         
-        priceLabel.textColor = .price
         priceLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         priceLabel.textAlignment = .right
         priceLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -85,12 +83,9 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
             
             // sourceLabel
             sourceLabel.centerYAnchor.constraint(equalTo: priceLabel.centerYAnchor),
-//            sourceLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             sourceLabel.trailingAnchor.constraint(equalTo: priceLabel.leadingAnchor),
             sourceLabel.leadingAnchor.constraint(equalTo: jobIdentityLabel.trailingAnchor, constant: 5),
-//            sourceLabel.trailingAnchor.constraint(lessThanOrEqualTo: priceLabel.leadingAnchor, constant: -8),
-//            sourceLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
+
             // priceLabel
             priceLabel.centerYAnchor.constraint(equalTo: jobIdentityLabel.centerYAnchor),
             priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
@@ -113,9 +108,6 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         normalModeConstraints = [
             jobIdentityLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor),
             jobIdentityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            carLabel.trailingAnchor.constraint(equalTo: sourceLabel.leadingAnchor, constant: -8),
-//            sourceLabel.centerYAnchor.constraint(equalTo: carLabel.centerYAnchor),
-//            sourceLabel.leadingAnchor.constraint(equalTo: carLabel.trailingAnchor, constant: 5),
             
             statusPaymentLabel.topAnchor.constraint(equalTo: jobIdentityLabel.bottomAnchor, constant: 2),
             statusPaymentLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
@@ -125,9 +117,6 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         selectionModeConstraints = [
             jobIdentityLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor/*, constant: 4*/),
             jobIdentityLabel.leadingAnchor.constraint(equalTo: checkmarkButton.trailingAnchor, constant: 12),
-            
-//            sourceLabel.centerYAnchor.constraint(equalTo: carLabel.centerYAnchor),
-//            sourceLabel.leadingAnchor.constraint(equalTo: carLabel.trailingAnchor, constant: 5),
             
             statusPaymentLabel.topAnchor.constraint(equalTo: jobIdentityLabel.bottomAnchor/*, constant: 2*/),
             statusPaymentLabel.leadingAnchor.constraint(equalTo: checkmarkButton.trailingAnchor, constant: 12),
@@ -152,22 +141,19 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         dateformatter.timeStyle = .none
         
         dateLabel.text = dateformatter.string(from: item.date)
-        jobIdentityLabel.text = item.jobDescription
+        jobIdentityLabel.text = item.jobTitle
         sourceLabel.text = item.source.displayName
-//        print(sourceLabel.text)
         priceLabel.text = String(format: "%.0f zł", (item.price))
-        
-        // Настройка статуса оплаты
+
         if item.isPaid {
-//            statusPaymentLabel.textColor = .
             statusPaymentLabel.text = "paid_for_cell".localized
-//            priceLabel.textColor = .systemGreen.withAlphaComponent(0.8)
-//            jobIdentityLabel.textColor = .systemGray
+            statusPaymentLabel.textColor = .price
+            priceLabel.textColor = .price
+
         } else {
             statusPaymentLabel.text = "unPaid_for_cell".localized
-//            statusPaymentLabel.textColor = .systemOrange
-//            priceLabel.textColor = .systemBlue
-//            jobIdentityLabel.textColor = .label
+            statusPaymentLabel.textColor = .systemOrange
+            priceLabel.textColor = .systemOrange.withAlphaComponent(0.7)
         }
         
         // Переключаем layout если режим изменился ИЛИ устанавливается впервые
@@ -184,8 +170,6 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     }
     
     func animateAppearance(delayMultiplier: Int = 0) {
-//            guard !hasAnimated else { return } // ⚡ предотвращаем повторную анимацию
-//            hasAnimated = true
             
             transform = CGAffineTransform(translationX: 0, y: bounds.height)
             alpha = 0.0

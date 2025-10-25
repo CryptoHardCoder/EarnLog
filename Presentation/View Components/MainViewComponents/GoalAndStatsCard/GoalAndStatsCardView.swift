@@ -20,6 +20,7 @@ final class GoalAndStatsCardView: FlippableView {
     init() {
         super.init(frontView: goalChartView, backView: statsCardView)
         setupView()
+        print("GoalAndStatsCardView inited")
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -29,14 +30,17 @@ final class GoalAndStatsCardView: FlippableView {
 //        setGoalValues()
     }
     
-    func setGoalValues(current: Int = 0, goal: Int = 0) {
+    func setGoalValues(current: Double = 0, goal: Double = 0) {
         goalChartView.setValues(current: current, goalValue: goal)
     }
     
-    func setStatsValues(newvalues: [(String, Int)] ){
+    func setStatsValues(newvalues: [(String, Double)] ){
         statsCardView.setNewStatsData(newStats: newvalues)
     }
-
+    
+    deinit {
+        print("GoalAndStatsCardView deinited")
+    }
 }
     
 

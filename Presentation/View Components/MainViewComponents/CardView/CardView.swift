@@ -26,17 +26,7 @@ class CardView: FlippableView {
         setupBackView()
         updateUI()
     }
-    
-//    init(totalValue: Double, paidValue: Double, pendingValue: Double) {
-//        self.totalValue = totalValue
-//        self.paidValue = paidValue
-//        self.pendingValue = pendingValue
-//        super.init(frontView: front, backView: back)
-//        setupFrontView()
-//        setupBackView()
-//        updateUI()
-//    }
-    
+
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     // MARK: - FRONT
@@ -78,12 +68,12 @@ class CardView: FlippableView {
         let totalIncomeText = UILabel()
         totalIncomeText.text = "Total Income"
         totalIncomeText.font = .systemFont(ofSize: 18, weight: .semibold)
-        totalIncomeText.textColor = .white
+        totalIncomeText.textColor = .cardViewTextColors
         totalIncomeText.translatesAutoresizingMaskIntoConstraints = false
         
-        totalIncomeValueLabel.text = String(format: "$ %.2f", totalValue ?? 0.0 )
+//        totalIncomeValueLabel.text = String(format: "$ %.2f", totalValue ?? 0.0 )
         totalIncomeValueLabel.font = .systemFont(ofSize: 27, weight: .bold)
-        totalIncomeValueLabel.textColor = .white
+        totalIncomeValueLabel.textColor = .cardViewTextColors
         totalIncomeValueLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let stack = UIStackView(arrangedSubviews: [totalIncomeText, totalIncomeValueLabel])
@@ -121,18 +111,18 @@ class CardView: FlippableView {
     private func createComponents(iconName: String, text: String, valueLabel: UILabel, right: Bool = false) -> UIView {
         let icon = UIImageView(image: UIImage(named: iconName))
         icon.contentMode = .scaleAspectFit
-        icon.tintColor = .white
+        icon.tintColor = .cardViewTextColors
         icon.translatesAutoresizingMaskIntoConstraints = false
         
         let titleLabel = UILabel()
         titleLabel.text = text
         titleLabel.font = .systemFont(ofSize: 18, weight: .medium)
-        titleLabel.textColor = .white
+        titleLabel.textColor = .cardViewTextColors
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
 //        valueLabel.text = String(format: "$ %.2f", value)
         valueLabel.font = .systemFont(ofSize: 23, weight: .medium)
-        valueLabel.textColor = .white
+        valueLabel.textColor = .cardViewTextColors
         valueLabel.translatesAutoresizingMaskIntoConstraints = false
         
         let container = UIView()
@@ -182,9 +172,13 @@ class CardView: FlippableView {
    }
    
    private func updateUI() {
-       totalIncomeValueLabel.text = String(format: "$ %.2f", totalValue ?? 0.0)
-       paidValueLabel.text = String(format: "$ %.2f", paidValue ?? 0.0)
-       pendingValueLabel.text = String(format: "$ %.2f", pendingValue ?? 0.0)
+       let totalValueBind = totalValue ?? 0.0
+       let paidValuebind = paidValue ?? 0.0
+       let pendingValueBind = pendingValue ?? 0.0
+       
+       totalIncomeValueLabel.text = String(describing: "$ \(totalValueBind.formattedWithSpaces)")
+       paidValueLabel.text = String(describing: "$ \(paidValuebind.formattedWithSpaces)")
+       pendingValueLabel.text = String(describing: "$ \(pendingValueBind.formattedWithSpaces)")
    }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

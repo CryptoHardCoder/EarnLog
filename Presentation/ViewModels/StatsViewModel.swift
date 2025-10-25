@@ -9,61 +9,61 @@ import Foundation
 import UIKit
 
 class StatsViewModel: MemoryTrackable{
-    
-    var groupedItems = [DailyTotal]()
-    
-    private let statsManager = AppCoreServices.shared.statisticsCalculator
-    
-    private let dataFilter = AppCoreServices.shared.dataFilter
-    
-    private let appFileManager = AppCoreServices.shared.appFileManager
-    
-//    var filteredItemsWithSource: [IncomeEntry] = []
-    
-    var sources: [IncomeSource] {
-        appFileManager.sources
-    }
-    
-    var source: IncomeSource? = nil
-    
-    var filteredItems: [IncomeEntry] = []
-    
-    var currentFilterInterval: TimeFilter = .day
-    
-    var targetValue: Double {
-        return UserDefaults.standard.double(forKey: "targetValue")
-    }
-    
-    var onDataChanged: (() -> Void)?
-    
-    init() {
-        trackCreation()
-    }
-    
-    func refreshData(){
-        filteredItems = dataFilter.getFilteredItems(for: currentFilterInterval, source: source)
-//        filteredItemsWithSource = AppFileManager.shared.getFilteredItemsWithSource(
-//                                                                        filteredItems: filteredItems,
-//                                                                        source: source)
-        groupedItems = statsManager.getDailyTotal(items: filteredItems)
-        onDataChanged?()
-    }
-    
-    func changeSegmentFilter(index: Int){
-        let filters = TimeFilter.allCases
-        guard index < filters.count else { return }
-        currentFilterInterval = filters[index]
-        refreshData()
-    }
-    
-    func getStats() -> EntryStatistics {
-        return statsManager.getStatistics(for: filteredItems, timeFilter: currentFilterInterval)
-    }
-    
-    deinit {
-        trackDeallocation() // для анализа на memory leaks
-    }
-    
+//    
+//    var groupedItems = [DailyTotal]()
+//    
+//    private let statsManager = AppCoreServices.shared.statisticsCalculator
+//    
+//    private let dataFilter = AppCoreServices.shared.dataFilter
+//    
+//    private let appFileManager = AppCoreServices.shared.appFileManager
+//    
+////    var filteredItemsWithSource: [IncomeEntry] = []
+//    
+//    var sources: [IncomeSource] {
+//        appFileManager.sources
+//    }
+//    
+//    var source: IncomeSource? = nil
+//    
+//    var filteredItems: [IncomeEntry] = []
+//    
+//    var currentFilterInterval: TimeFilter = .day
+//    
+//    var targetValue: Double {
+//        return UserDefaults.standard.double(forKey: "targetValue")
+//    }
+//    
+//    var onDataChanged: (() -> Void)?
+//    
+//    init() {
+//        trackCreation()
+//    }
+//    
+//    func refreshData(){
+//        filteredItems = dataFilter.getFilteredItems(for: currentFilterInterval, source: source)
+////        filteredItemsWithSource = AppFileManager.shared.getFilteredItemsWithSource(
+////                                                                        filteredItems: filteredItems,
+////                                                                        source: source)
+//        groupedItems = statsManager.getDailyTotal(items: filteredItems)
+//        onDataChanged?()
+//    }
+//    
+//    func changeSegmentFilter(index: Int){
+//        let filters = TimeFilter.allCases
+//        guard index < filters.count else { return }
+//        currentFilterInterval = filters[index]
+//        refreshData()
+//    }
+//    
+//    func getStats() -> EntryStatistics {
+//        return statsManager.getStatistics(for: filteredItems, timeFilter: currentFilterInterval)
+//    }
+//    
+//    deinit {
+//        trackDeallocation() // для анализа на memory leaks
+//    }
+//    
 //    func getItemsWithSource(){
 //        filteredItems = AppFileManager.shared.getFilteredItems(for: currentFilterInterval)
 //        filteredItemsWithSource = AppFileManager.shared.getFilteredItemsWithSource(

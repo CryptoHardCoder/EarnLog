@@ -5,7 +5,6 @@
 //  Created by M3 pro on 03/09/2025.
 //
 
-// MARK: - Views/Components/SemicircleProgressChart.swift
 import UIKit
 
 // MARK: - Configuration
@@ -39,20 +38,15 @@ final class SemicircleProgressChart: UIView {
     // MARK: - Private Properties
     private var isAnimating = false
     private var animationCompletion: (() -> Void)?
+
+    private var progress: CGFloat = 0.0
     
-    // MARK: - Public API
-    private var progress: CGFloat = 0.0 {
-        didSet {
-//            updateLabels()
-        }
-    }
-    
-    private var currentValue: Int = 0 {
+    private var currentValue: Double = 0.0 {
         didSet {
             updateProgressFromValues()
         }
     }
-    private var userGoalValue: Int = 0
+    private var userGoalValue: Double = 0.0
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -163,6 +157,11 @@ final class SemicircleProgressChart: UIView {
         CATransaction.commit()
     }
     
+    // MARK: - Updates
+    private func updateProgress() {
+        progressLayer.strokeEnd = progress
+    }
+    
     private func updatePath() {
         let center = CGPoint(x: bounds.midX, y: bounds.maxY - configuration.lineWidth / 2)
         let radius = max(bounds.width, bounds.height) / 2 - configuration.lineWidth * 2
@@ -173,11 +172,6 @@ final class SemicircleProgressChart: UIView {
         
         backgroundLayer.path = path.cgPath
         progressLayer.path = path.cgPath
-    }
-    
-    // MARK: - Updates
-    private func updateProgress() {
-        progressLayer.strokeEnd = progress
     }
     
     private func updateProgressFromValues() {
@@ -196,13 +190,12 @@ final class SemicircleProgressChart: UIView {
         gradientLayer.frame = bounds
     }
     
-    // MARK: - Обновляем лейблы без лишних вызовов
     private func updateLabels() {
         // Обновляем статичные лейблы
-        descriptionLabel.text = "OUT OF \(configuration.currencySymbol)\(userGoalValue)"
-        
-        // Обновляем level text на основе текущего прогресса
-//        print("levelText.text: \(levelText.text)")
+
+        let userGoalValueString = userGoalValue.formattedWithSpaces
+        descriptionLabel.text = "OUT OF \(configuration.currencySymbol)\(userGoalValueString)"
+
         levelText.text = {
             if progress < 0.4 || progress == 0.0 {
                 return GoalLevels.low.rawValue.uppercased()
@@ -214,12 +207,12 @@ final class SemicircleProgressChart: UIView {
         }()
 
         // Выводим прогресс только при изменении
-        print("progress: \(progress)")
+//        print("progress: \(progress)")
     }
     
     // MARK: - Public Method
-    func setValues(current: Int, goalValue: Int, completion: (() -> Void)? = nil) {
-        guard current != currentValue,  goalValue != userGoalValue else { return }
+    func setValues(current: Double, goalValue: Double, completion: (() -> Void)? = nil) {
+        guard current != currentValue || goalValue != userGoalValue else { return }
         
         let oldValue = currentValue
         
@@ -254,6 +247,8 @@ final class SemicircleProgressChart: UIView {
         }
     }
     
+    
+    // MARK: - Private Animation Methods
     private func animateProgress(to newProgress: CGFloat, duration: TimeInterval? = nil, completion: (() -> Void)? = nil) {
         let animationDuration = duration ?? configuration.animationDuration
         
@@ -267,7 +262,6 @@ final class SemicircleProgressChart: UIView {
         animation.toValue = newProgress
         animation.duration = animationDuration
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.delegate = self
         animation.fillMode = .forwards
         animation.isRemovedOnCompletion = false
         
@@ -291,8 +285,7 @@ final class SemicircleProgressChart: UIView {
         animationCompletion = nil
     }
     
-    // MARK: - Private Animation Methods
-    private func animateValueLabel(from startValue: Int, to endValue: Int, duration: TimeInterval) {
+    private func animateValueLabel(from startValue: Double, to endValue: Double, duration: TimeInterval) {
         let startTime = CACurrentMediaTime()
         let diff = endValue - startValue
         
@@ -300,13 +293,15 @@ final class SemicircleProgressChart: UIView {
             let elapsed = CACurrentMediaTime() - startTime
             let progress = min(elapsed / duration, 1.0)
             let eased = 1 - pow(1 - progress, 3)
-            let value = startValue + Int(Double(diff) * eased)
+            let value = startValue + diff * eased
+            let valueString = value.formattedWithSpaces
             
-            self?.valueLabel.text = "\(self?.configuration.currencySymbol ?? "$")\(value)"
+            self?.valueLabel.text = "\(self?.configuration.currencySymbol ?? "$")\(valueString)"
             
             if progress >= 1.0 {
                 $0.invalidate()
-                self?.valueLabel.text = "\(self?.configuration.currencySymbol ?? "$")\(endValue)"
+                let endValueString = endValue.formattedWithSpaces
+                self?.valueLabel.text = "\(self?.configuration.currencySymbol ?? "$")\(endValueString)"
             }
         })
         
@@ -337,21 +332,21 @@ private extension CADisplayLink {
     }
 }
 
-// MARK: - CAAnimationDelegate
-extension SemicircleProgressChart: CAAnimationDelegate {
-    func animationDidStart(_ anim: CAAnimation) {
-        // print("Анимация прогресса началась")
-    }
-    
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        isAnimating = false
-        if flag {
-            // print("Анимация прогресса завершилась успешно")
-        } else {
-            // print("Анимация прогресса была прервана")
-        }
-    }
-}
+//// MARK: - CAAnimationDelegate
+//extension SemicircleProgressChart: CAAnimationDelegate {
+//    func animationDidStart(_ anim: CAAnimation) {
+//        // print("Анимация прогресса началась")
+//    }
+//    
+//    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+//        isAnimating = false
+//        if flag {
+//            // print("Анимация прогресса завершилась успешно")
+//        } else {
+//            // print("Анимация прогресса была прервана")
+//        }
+//    }
+//}
 //// MARK: - Views/Components/SemicircleProgressChart.swift
 //import UIKit
 //

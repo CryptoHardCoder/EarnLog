@@ -13,7 +13,7 @@ final class TabBarController: UITabBarController, MemoryTrackable {
     
     private let mainViewController = MainViewController()
     private let statisticsViewController = StatsViewController()
-    private let addIncomeViewController = IncomeTrackerViewController()
+    private let addIncomeViewController = AddIncomeViewController()
     private let historyViewController = HistoryViewController()
     private let settingViewController = SettingsViewController()
     

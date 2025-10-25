@@ -3,70 +3,93 @@
 //  JobData
 //
 //  Created by M3 pro on 30/07/2025.
-//
-//TODO: 1. Implement fetching notification data and update the bell icon color depending on whether there are notifications
-///TODO: 2. Implement fetching the time of day and update the label
-//•    morning — утро (примерно с 5–6 до 12)
-//•    afternoon — после полудня, день (примерно 12–17)
-//•    evening — вечер (примерно 17–21)
-//•    night — ночь (после 21 и до рассвета)
-//TODO: 3. Implement fetching the user's name and update the label
-///TODO: 4. Implement fetching data for total, paid, and pending values
-///TODO: 5.Create function for getting monthly goal and updating label
-//TODO: 6.Create function for update descriptions in monthly goal card valгуs: moanthly goal and total values, after updating the card with the new values
-//TODO: 7. Create function for updating statsCard with new values
+
 import Foundation
+import Combine
 
-final class MainViewModel: MemoryTrackable {
-    @Published var lastEntriesPublisher = [IncomeEntry]()
-    @Published var cardData = DataSummary()
+struct MainViewData {
+    let lastEntries: [IncomeEntry]
+    let cardData: DataSummary
+    let monthlyGoalStats: (goal: Double, total: Double)
+    let lastMonthStats: [(String, Double)]
+}
 
-    private let dataManager = AppCoreServices.shared.appFileManager
-    private let statsManager = AppCoreServices.shared.statisticsCalculator
-    private let dayPeriod = DayPeriod.fromNow()
-    
-    private var lastMonthEntries: [IncomeEntry] {
-        statsManager.getLastMonthItems()
-    }
-    private var lastEntries:  [IncomeEntry]{
-        let entries = dataManager.getAllItems()
-        let lastEntries: [IncomeEntry]
-        switch entries{
-            case .success(let items):
-                lastEntries = items.suffix(5)
-            case .failure(_):
-                lastEntries = []
-        }
-        return lastEntries
-    }
-    var lastTimeOfDay: String{
+final class MainViewModel: MainViewModelProtocol, MemoryTrackable {
+    @Published var viewState: ViewState<MainViewData> = .ready
+    var lastTimeOfDay: String {
         dayPeriod.displayText
-    } 
-    
-    var monthlyGoal: Int{
-        get{
-            let goal = UserDefaults.standard.string(forKey: "monthlyGoal") ?? ""
-            return Int(goal) ?? 0
-        }
-        set {
-            
-        }
-    } 
-    
-    var onDataChanged: (() -> Void)?
-    
-    init() {
-        refreshData()
+    }
+    private let getCurrentMonthItemsUseCase: GetCurrentMonthItemsUseCase
+    private var userMonthlyGoalUseCase: UserMonthlyGoalUseCase  // вместо прямого UserDefaults
+        
+    private var dayPeriod: DayPeriod{
+        DayPeriod.fromNow()
+    }
+    private var cancellables = Set<AnyCancellable>()
+        
+    init(
+        getCurrentMonthItemsUseCase: GetCurrentMonthItemsUseCase,
+        userMonthlyGoalUseCase: UserMonthlyGoalUseCase
+    ) {
+        self.getCurrentMonthItemsUseCase = getCurrentMonthItemsUseCase
+        self.userMonthlyGoalUseCase = userMonthlyGoalUseCase
+        subscribeToDataUpdates()
     }
     
-    private func refreshData(){
-        lastEntriesPublisher = lastEntries
+    func loadData() async {
+        viewState = .loading
+        
+        do {
+            let entries = try await getCurrentMonthItemsUseCase.execute().sorted { $0.date > $1.date }
+            let data = MainViewData(
+                lastEntries: Array(entries.prefix(5)),
+                cardData: StatisticsCalculator.getCurrentMonthStats(from: entries),
+                monthlyGoalStats: calculateMonthlyGoalStats(from: entries),
+                lastMonthStats: Array(StatisticsCalculator.getTotalWithSources(in: entries).prefix(4))
+            )
+            viewState = .loaded(data)
+            
+        } catch {
+            viewState = .error("Ошибка при загрузке данных: \(error.localizedDescription)")
+        }
+    }
+    
+    private func subscribeToDataUpdates() {
+        DataUpdateCoordinator.shared.events
+            .sink { [weak self] event in
+                switch event {
+                    case .newIncomeEntryCreated:
+                       Task {
+                            await self?.loadData()
+                        }
+                    case .incomeEntryUpdated(_):
+                        break
+                    case .incomeEntryDeleted(_):
+                        Task {
+                             await self?.loadData()
+                         }
+                    case .goalUpdated:
+                        Task {
+                             await self?.loadData()
+                         }
+                    case .statisticsNeedRefresh:
+                        break
+                }
+            }
+            .store(in: &cancellables)
+    }
+        
+    private func calculateMonthlyGoalStats(from entries: [IncomeEntry]) -> (goal: Double, total: Double) {
+        var goal = userMonthlyGoalUseCase.monthlyGoal
+        if goal == 0.0 {
+            print("Mock goal value installed")
+            UserDefaults.standard.set(10000.00, forKey: "monthlyGoal")
+            goal = 10000.00
+        }
+        let total = entries.reduce(0.0) { $0 + $1.price }
+        return (goal: goal, total: total)
     }
 
-    func getTimesOfDay(){
-       
-    } 
-    
     func getUserName(){
         
     }
@@ -75,26 +98,78 @@ final class MainViewModel: MemoryTrackable {
         
     }
     
-    func getIncomeDataForCard(){
-        cardData = statsManager.getLastMonthStats()
-    }
+    
+//    private var currentMonthEntries: [IncomeEntry] {
+//        get async {
+//            do{
+//                return try await getCurrentMonthItemsUseCase.execute()
+//            } catch {
+//                return []
+//            }
+//        }
+//    }
+//    private var lastEntries: [IncomeEntry]{
+//        get async {
+//            await currentMonthEntries.suffix(5)
+//        }
+//    } 
+//    var lastTimeOfDay: String{
+//        dayPeriod.displayText
+//    } 
+//    
+//    var monthlyGoal: Int{
+//        get{
+//            let goal = UserDefaults.standard.string(forKey: "monthlyGoal") ?? ""
+//            return Int(goal) ?? 0
+//        }
+//        set {
+//            
+//        }
+//    } 
+//    
+//    init( getCurrentMonthItemsUseCase: GetCurrentMonthItemsUseCase) {
+//        self.getCurrentMonthItemsUseCase = getCurrentMonthItemsUseCase
+//    }
+//    
+//    private func refreshData(){
+//        Task{
+//            do{
+//                lastEntriesPublisher = await lastEntries
+//            }
+//        }
+//    }
+
+   
+//    func getIncomeDataForCard(){
+//        var items: [IncomeEntry] 
+//        Task {
+//            items = await currentMonthEntries
+//        }
+//        cardData = StatisticsCalculator.getCurrentMonthStats(from: items)
+//    }
 
     //FIXME: - Переписать на норм
-    func getMonthlyGoalStats() -> (goal: Int, total: Int){
-        if monthlyGoal == 0 {
-            print("Mock goal value installed")
-            UserDefaults.standard.set(8000, forKey: "monthlyGoal")
-            monthlyGoal = 8000
-        }
-        let total = lastMonthEntries.reduce(0) { $0 + $1.price}
-        return (goal: monthlyGoal, total: Int(total))
-    }
+//    func getMonthlyGoalStats() -> (goal: Int, total: Int){
+//        if monthlyGoal == 0 {
+//            print("Mock goal value installed")
+//            UserDefaults.standard.set(8000, forKey: "monthlyGoal")
+//            monthlyGoal = 8000
+//        }
+//        var total: Double
+//        Task{
+//           total = await currentMonthEntries.reduce(0) { $0 + $1.price}
+//        }
+//        return (goal: monthlyGoal, total: Int(total))
+//    }
     
-    func getLastMonthStats() -> [(String, Int)]{
-        let items = statsManager.getLastMonthItems()
-        let statsData = Array(statsManager.getTotalWithSources(in: items).prefix(4))
-        return statsData
-    }
+//    func getLastMonthStats() -> [(String, Int)]{
+//        var items: [IncomeEntry] 
+//        Task {
+//            items = await currentMonthEntries
+//        }
+//        let statsData = Array(StatisticsCalculator.getTotalWithSources(in: items).prefix(4))
+//        return statsData
+//    }
     func getLastItems(){
         
     }
