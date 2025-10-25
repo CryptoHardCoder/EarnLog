@@ -19,7 +19,8 @@ class SideJobManagerImpl: SideJobManagerRepository, MemoryTrackable{
         let predicate = NSPredicate(format: "name ==[c] %@", name)
         let existing = try await dataManager.fetch(
             SideJobEntity.self,
-            predicate: predicate,
+            predicate: predicate, 
+            sortDescriptors: nil,
             limit: 1
         )
         return !existing.isEmpty
@@ -27,15 +28,18 @@ class SideJobManagerImpl: SideJobManagerRepository, MemoryTrackable{
     
     
     func loadActiveJobs() async throws -> [SideJob] {
-        let entities = try await dataManager.fetch(SideJobEntity.self)
+        let entities = try await dataManager.fetch(SideJobEntity.self) {
+            $0.toSideJob()
+        }
+        if entities.isEmpty {
+            return createExampleJobsIfNeeded()
+        }
         return entities
             .filter { $0.isActive }
-            .map { $0.toSideJob() }
     }    
     
     func getAllJobs() async throws -> [SideJob] {
-        try await dataManager.fetch(SideJobEntity.self)
-            .map { $0.toSideJob() }
+        try await dataManager.fetch(SideJobEntity.self) { $0.toSideJob() }
     }
     
     func saveNewJob(job: SideJob) async throws {
@@ -58,7 +62,8 @@ class SideJobManagerImpl: SideJobManagerRepository, MemoryTrackable{
          
         let duplicates = try await dataManager.fetch(
             SideJobEntity.self,
-            predicate: predicate,
+            predicate: predicate, 
+            sortDescriptors: nil,
             limit: 1
         )
          

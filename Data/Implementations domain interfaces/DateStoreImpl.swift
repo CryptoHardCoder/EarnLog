@@ -33,10 +33,9 @@ final class DateStoreImpl: DateStoreRepository {
     }
 
     // Тоже асинхронный, потому что использует await
-    func loadLastKnownDate() async throws -> Date? {
+    func loadLastKnownDate() async throws -> Date {
         guard try await fileService.exists(at: lastKnownDateFileURL) else {
             throw StorageError.fileNotFound
-            return nil
         }
 
         let url = try await lastKnownDateFileURL.fileURL()

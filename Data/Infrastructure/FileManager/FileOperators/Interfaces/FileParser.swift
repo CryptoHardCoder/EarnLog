@@ -7,5 +7,5 @@
 import Foundation
 
 protocol FileParser {
-    func parse(content: String) -> [IncomeEntry]
+    func parse(content: String) throws -> [IncomeEntry]
 }

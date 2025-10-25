@@ -9,6 +9,7 @@ import Foundation
 enum SideJobError: LocalizedError {
     case duplicateName(String)
     case notFound(UUID)
+    case loadingFailed
     
     var errorDescription: String? {
         switch self {
@@ -16,6 +17,8 @@ enum SideJobError: LocalizedError {
             return "Подработка с именем '\(name)' уже существует"
         case .notFound(let id):
             return "Подработка с ID \(id) не найдена"
+            case .loadingFailed:
+                return "Failed to load jobs"
         }
     }
 }

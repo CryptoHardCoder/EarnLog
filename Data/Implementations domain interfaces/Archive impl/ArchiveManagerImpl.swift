@@ -11,21 +11,16 @@ final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
 
     // MARK: - Dependencies
     private let incomeManager: IncomeManagerProtocol
-    private let fileProvider: FileHandler
     private let dateStore: DateStoreRepository
     private let metadataService: ArchiveMetadataServiceRepository
-    private let appPaths: AppPathsBuilderRepository
-    private let fileStorageService: FileStorageService
+
     private let archiveService: ArchiveServiceRepository
     
     // MARK: - Initialization
-    init(incomeManager: IncomeManagerProtocol, fileProvider: FileHandler, dateStore: DateStoreRepository, metadataService: ArchiveMetadataServiceRepository, appPaths: AppPathsBuilderRepository, fileStorageService: FileStorageService, archiveService: ArchiveServiceRepository) {
+    init(incomeManager: IncomeManagerProtocol, dateStore: DateStoreRepository, metadataService: ArchiveMetadataServiceRepository, appPaths: AppPathsBuilderRepository, fileStorageService: FileStorageService, archiveService: ArchiveServiceRepository) {
         self.incomeManager = incomeManager
-        self.fileProvider = fileProvider
         self.dateStore = dateStore
         self.metadataService = metadataService
-        self.appPaths = appPaths
-        self.fileStorageService = fileStorageService
         self.archiveService = archiveService
     }
     
@@ -35,7 +30,7 @@ final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
     
     // MARK: - Public Interface
     /// Проверяет необходимость архивации при запуске приложения
-    func checkArchiveOnAppStart() async {
+    func checkArchiveOnAppStart() async throws {
         let today = Date()
         let calendar = Calendar.current
         
@@ -51,7 +46,9 @@ final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
                         todayComponents.month != lastComponents.month
         
         if isNewMonth {
-            let itemsToArchive = incomeManager.getItemsForPeriod(
+            let items = try await incomeManager.getAllItems()
+            let itemsToArchive = DataFilter.getItemsForPeriod(
+                items: items, 
                 year: lastComponents.year ?? 0, 
                 month: lastComponents.month ?? 0
             )
@@ -96,7 +93,9 @@ final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
         
         // Если запрашиваем текущий период - берем из памяти
         if year == currentYear && month == currentMonth {
-            return .success(incomeManager.getItemsForPeriod(year: year, month: month))
+            let items = try? await incomeManager.getAllItems()
+            guard let items = items else { return .failure(.archiveNotFound) }
+            return .success(DataFilter.getItemsForPeriod(items: items, year: year, month: month))
         }
         
         // Иначе ищем в архивах

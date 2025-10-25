@@ -9,6 +9,16 @@ import Foundation
 import CoreData
 
 protocol CoreDataManagerRepository {
+    // Версия с transform - для domain моделей
+    func fetch<T: NSManagedObject, R>(
+        _ type: T.Type,
+        predicate: NSPredicate?,
+        sortDescriptors: [NSSortDescriptor]?,
+        limit: Int?,
+        transform: @escaping (T) -> R
+    ) async throws -> [R]
+    
+    // Версия без transform - для entities
     func fetch<T: NSManagedObject>(
         _ type: T.Type,
         predicate: NSPredicate?,
@@ -16,12 +26,23 @@ protocol CoreDataManagerRepository {
         limit: Int?
     ) async throws -> [T]
     
-    func fetchByID<T: NSManagedObject>(_ type: T.Type, id: UUID) async throws -> T?
+    // fetchByID с transform - для domain модели
+    func fetchByID<T: NSManagedObject, R>(
+        _ type: T.Type, 
+        id: UUID,
+        transform: @escaping (T) -> R
+    ) async throws -> R?
+    
+    // fetchByID без transform - для entity
+    func fetchByID<T: NSManagedObject>(
+        _ type: T.Type, 
+        id: UUID
+    ) async throws -> T?
     
     func create<T: NSManagedObject>(
         _ type: T.Type,
         configure: @escaping (T) -> Void
-    ) async throws -> T 
+    ) async throws -> T
     
     func update<T: NSManagedObject>(id: UUID, type: T.Type, changes: @escaping (T) -> Void ) async throws
     
@@ -29,26 +50,27 @@ protocol CoreDataManagerRepository {
     
     func delete<T: NSManagedObject>(id: UUID, type: T.Type) async throws
     
-    func delete(objectID: NSManagedObjectID) async throws 
+    func delete(objectID: NSManagedObjectID) async throws
     
     func saveViewContext() async throws
-    
 }
 
 extension CoreDataManagerRepository {
     
     /// Fetch с дефолтными значениями
-    func fetch<T: NSManagedObject>(
+    func fetch<T: NSManagedObject, R>(
         _ type: T.Type,
         predicate: NSPredicate? = nil,
         sortDescriptors: [NSSortDescriptor]? = nil,
-        limit: Int? = nil
-    ) async throws -> [T] {
+        limit: Int? = nil,
+        transform:  @escaping (T) -> R
+    ) async throws -> [R] {
         try await fetch(
             type,
             predicate: predicate,
             sortDescriptors: sortDescriptors,
-            limit: limit
+            limit: limit, 
+            transform:  transform
         )
     }
 }

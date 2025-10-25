@@ -28,7 +28,7 @@ final class PDFLoader: FileLoader {
             guard let page = pdfDocument.page(at: pageIndex),
                   let pageText = page.string else { continue }
             
-            let pageItems = pdfParser.parse(content: pageText)
+            let pageItems = try pdfParser.parse(content: pageText)
             items.append(contentsOf: pageItems)
         }
     

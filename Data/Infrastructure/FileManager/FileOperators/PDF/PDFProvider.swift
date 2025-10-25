@@ -6,12 +6,18 @@
 //
 import Foundation 
 
-final class PDFProvider: FileHandler {
+final class PDFProvider: FileHandler {    
+    
+    private let sideJobManager: SideJobManagerRepository
     
     lazy var creator: FileDataCreator = PDFCreator()
     
-    lazy var parser: FileParser = PDFParser()
+    lazy var parser: FileParser = PDFParser(sideJobsManager: sideJobManager)
     
     lazy var loader: FileLoader = PDFLoader(pdfParser: parser)
+    
+    init(sideJobManager: SideJobManagerRepository) {
+        self.sideJobManager = sideJobManager
+    }
 
 }

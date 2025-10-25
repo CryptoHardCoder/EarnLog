@@ -8,13 +8,19 @@ import Foundation
 
 final class CSVParser: FileParser {
     
-    func parse(content: String) -> [IncomeEntry]{
-        parseCSVToItems(csvContent: content)
+    private let sideJobManager: SideJobManagerRepository
+    
+    init(sideJobManager: SideJobManagerRepository) {
+        self.sideJobManager = sideJobManager
+    }
+    
+    func parse(content: String) throws -> [IncomeEntry]{
+        try parseCSVToItems(csvContent: content)
     }
     
     //TODO: - поправить парсинг линий, сейчас конечные строки где пишется итоги по нулям подтягиваются. Надо чтобы эти строки игнорировались при парсинге
     /// Парсит CSV контент в массив товаров
-    private func parseCSVToItems(csvContent: String) -> [IncomeEntry] {
+    private func parseCSVToItems(csvContent: String) throws -> [IncomeEntry] {
         let lines = csvContent.components(separatedBy: .newlines)
 //        print(lines)
         var items: [IncomeEntry] = []
@@ -72,11 +78,15 @@ final class CSVParser: FileParser {
                 statusPaidBool = false
             }
 //            print("statusPaidBool: \(statusPaidBool)")
-            
+            var sideJobs: [SideJob]? 
+            Task{
+                sideJobs = try? await sideJobManager.getAllJobs()
+            }
+            guard let jobs = sideJobs else { throw SideJobError.loadingFailed }
             let incomeSource: IncomeSource
             if fields.indices.contains(5) {
                 let sourceString = fields[5].trimmingCharacters(in: .whitespaces)
-                incomeSource = IncomeSource.fromDisplayName(sourceString)
+                incomeSource = IncomeSourceParser.fromDisplayName(sourceString, allJobs: jobs)
             } else {
                 incomeSource = IncomeSource.mainJob
             }

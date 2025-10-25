@@ -24,6 +24,32 @@ final class CoreDataManager: CoreDataManagerRepository {
         persistentContainer.viewContext
     }
 
+    // Версия с transform
+    func fetch<T: NSManagedObject, R>(
+        _ type: T.Type,
+        predicate: NSPredicate? = nil,
+        sortDescriptors: [NSSortDescriptor]? = nil,
+        limit: Int? = nil,
+        transform: @escaping (T) -> R
+    ) async throws -> [R] {
+        let fetchRequest = NSFetchRequest<T>(
+            entityName: String(describing: T.self)
+        )
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = sortDescriptors
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.relationshipKeyPathsForPrefetching = ["sideJob"]
+        if let limit {
+            fetchRequest.fetchLimit = limit
+        }
+        
+        return try await persistentContainer.performBackgroundTask{ context in
+            let results = try context.fetch(fetchRequest)
+            return results.map(transform)
+        }
+    }
+
+    // Версия без transform
     func fetch<T: NSManagedObject>(
         _ type: T.Type,
         predicate: NSPredicate? = nil,
@@ -35,18 +61,35 @@ final class CoreDataManager: CoreDataManagerRepository {
         )
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sortDescriptors
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.relationshipKeyPathsForPrefetching = ["sideJob"]
         if let limit {
             fetchRequest.fetchLimit = limit
         }
         
-        return try await persistentContainer.performBackgroundTask { context in
+        return try await persistentContainer.performBackgroundTask{ context in
             try context.fetch(fetchRequest)
         }
     }
     
-    func fetchByID<T: NSManagedObject>(_ type: T.Type, id: UUID) async throws -> T? {
+    
+    // fetchByID с transform
+    func fetchByID<T: NSManagedObject, R>(
+        _ type: T.Type, 
+        id: UUID,
+        transform: @escaping (T) -> R
+    ) async throws -> R? {
         let predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        return try await fetch(type, predicate: predicate).first
+        return try await fetch(type, predicate: predicate, limit: 1, transform: transform).first
+    }
+
+    // fetchByID без transform
+    func fetchByID<T: NSManagedObject>(
+        _ type: T.Type, 
+        id: UUID
+    ) async throws -> T? {
+        let predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        return try await fetch(type, predicate: predicate, limit: 1).first
     }
     
     func create<T: NSManagedObject>(

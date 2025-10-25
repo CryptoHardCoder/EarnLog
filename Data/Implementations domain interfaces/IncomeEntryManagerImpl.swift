@@ -19,8 +19,8 @@ final class IncomeEntryManagerImpl: IncomeManagerProtocol, MemoryTrackable {
     }
     
     func getAllItems() async throws -> [IncomeEntry] {
-        let entities = try await dataManager.fetch(IncomeEntity.self)
-        return entities.map { $0.toIncomeEntry() }
+        let entities = try await dataManager.fetch(IncomeEntity.self){ $0.toIncomeEntry()}
+        return entities
     }
     
     func addNewItem(item: IncomeEntry) async throws {

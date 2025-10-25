@@ -8,10 +8,10 @@
 import Foundation
 
 final class FileProviderFactory {
-    static func makeProvider(for format: FileFormat) -> FileHandler{
+    static func makeProvider(for format: FileFormat, sideJobManager: SideJobManagerRepository) -> FileHandler{
         switch format {
-            case .csv: return CSVProvider()
-            case .pdf: return PDFProvider()
+            case .csv: return CSVProvider(sideJobManager: sideJobManager)
+            case .pdf: return PDFProvider(sideJobManager: sideJobManager)
         }
     }
 }

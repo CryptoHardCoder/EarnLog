@@ -20,7 +20,7 @@ final class CSVLoader: FileLoader {
         do {
             let csvContent = try String(contentsOf: url, encoding: .utf8)
 //            print(csvContent)
-            let result = csvParser.parse(content: csvContent)
+            let result = try csvParser.parse(content: csvContent)
             return result
         } catch {
             print("❌ Ошибка чтения CSV файла \(url): \(error)")

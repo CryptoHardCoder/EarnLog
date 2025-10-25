@@ -9,6 +9,12 @@ import Foundation
 import PDFKit
 
 final class PDFParser: FileParser {
+    
+    private let sideJobsManager: SideJobManagerRepository
+    
+    init(sideJobsManager: SideJobManagerRepository) {
+        self.sideJobsManager = sideJobsManager
+    }
 
     // MARK: - Configuration
     private struct ParsingConfig {
@@ -28,7 +34,7 @@ final class PDFParser: FileParser {
         ]
     }
     
-    func parse(content: String) -> [IncomeEntry] {
+    func parse(content: String) throws -> [IncomeEntry] {
         let pageItems = extractItemsFromPageText(pageText: content)
         
         return pageItems.sorted { $0.date > $1.date }
@@ -130,9 +136,9 @@ extension PDFParser {
     private func extractPaymentStatus(from line: String) -> Bool {
         return line.contains("paid_for_cell".localized)
     }
-    
+    //TODO: написать функцию
     private func exractJobDescription(from line: String) -> String? {
-        
+        return ""
     }
     
     /// Извлекает марку и источник из строки
@@ -170,10 +176,14 @@ extension PDFParser {
         guard !components.isEmpty else { 
             return ("", .mainJob) 
         }
-        
+        var sideJobs: [SideJob]?
+        Task {
+            sideJobs = try? await sideJobsManager.getAllJobs()
+        }
+        let jobs = sideJobs ?? []
         let make = components[0]
         let sourceString = components.dropFirst().joined(separator: " ")
-        let source = IncomeSource.fromDisplayName(sourceString)
+        let source = IncomeSourceParser.fromDisplayName(sourceString, allJobs: jobs)
         
         return (make, source)
     }
