@@ -11,7 +11,6 @@ extension Double {
     private static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-//        formatter.groupingSeparator = " "
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
         formatter.locale = .autoupdatingCurrent
