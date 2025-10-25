@@ -7,7 +7,7 @@
 import Foundation 
 
 protocol GetAllItemsUseCase {
-    func execute() -> [IncomeEntry]
+    func execute() async throws -> [IncomeEntry]
 }
 
 final class GetAllItemsUseCaseImpl: GetAllItemsUseCase {
@@ -17,7 +17,7 @@ final class GetAllItemsUseCaseImpl: GetAllItemsUseCase {
         self.incomeManager = incomeManager
     }
     
-    func execute() -> [IncomeEntry] {
-        incomeManager.getAllItems()
+    func execute() async throws -> [IncomeEntry] {
+        try await incomeManager.getAllItems()
     }
 }

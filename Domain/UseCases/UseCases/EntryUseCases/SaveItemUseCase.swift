@@ -7,7 +7,7 @@
 import Foundation
 
 protocol SaveItemUseCase {
-    func execute(new item: IncomeEntry)
+    func execute(new item: IncomeEntry) async throws
 }
 
 final class SaveItemUseCaseImpl: SaveItemUseCase {
@@ -18,7 +18,7 @@ final class SaveItemUseCaseImpl: SaveItemUseCase {
         self.incomeManager = incomeManager
     }
     
-    func execute(new item: IncomeEntry) {
-        incomeManager.addNewItem(item: item)
+    func execute(new item: IncomeEntry) async throws {
+        try await incomeManager.addNewItem(item: item)
     }
 }

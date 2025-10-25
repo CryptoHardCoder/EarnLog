@@ -6,9 +6,9 @@
 //
 import Foundation
 
-final class StatisticsCalculator {
+enum StatisticsCalculator {
     
-    func getCurrentMonthStats(from items: [IncomeEntry]) -> DataSummary {
+    static func getCurrentMonthStats(from items: [IncomeEntry]) -> DataSummary {
         let today = Date()
         let calendar = Calendar.current
         
@@ -22,23 +22,23 @@ final class StatisticsCalculator {
         return DataSummary(from: currentMonthItems)
     }
     
-    func getItemsForSource(from items: [IncomeEntry], source: IncomeSource) -> [IncomeEntry] {
+    static func getItemsForSource(from items: [IncomeEntry], source: IncomeSource) -> [IncomeEntry] {
         items.filter { $0.source == source }
     }
     
-    func getTotalWithSources(in items: [IncomeEntry]) -> [(String, Int)] {
-        var arrayForReturn = [(source: String, totalVolume: Int)]()
+    static func getTotalWithSources(in items: [IncomeEntry]) -> [(String, Double)] {
+        var arrayForReturn = [(source: String, totalVolume: Double)]()
         let sourcesInItems = Set(items.map { $0.source })
         for source in sourcesInItems {
             let sourceString = source.displayName
             let itemsForSource = getItemsForSource(from: items, source: source)
             let totalVolume = itemsForSource.reduce(0) { $0 + $1.price }
-            arrayForReturn.append((source: sourceString, totalVolume: Int(totalVolume)))
+            arrayForReturn.append((source: sourceString, totalVolume: totalVolume))
         }
         return arrayForReturn.sorted { $0.totalVolume > $1.totalVolume }
     }
     
-    func getDailyTotal(from items: [IncomeEntry]) -> [DailyTotal] {
+    static func getDailyTotal(from items: [IncomeEntry]) -> [DailyTotal] {
         let calendar = Calendar.current
         let grouped = Dictionary(grouping: items) { calendar.startOfDay(for: $0.date) }
         
@@ -47,7 +47,7 @@ final class StatisticsCalculator {
         }.sorted { $0.date < $1.date }
     }
     
-    func getStatistics(for items: [IncomeEntry], timeFilter: TimeFilter) -> EntryStatistics {
+    static func getStatistics(for items: [IncomeEntry], timeFilter: TimeFilter) -> EntryStatistics {
         let totalPrice = items.reduce(0) { $0 + $1.price }
         let paid = items.filter { $0.isPaid }.reduce(0) { $0 + $1.price }
         let unpaid = items.filter { !$0.isPaid }.reduce(0) { $0 + $1.price }
@@ -62,7 +62,7 @@ final class StatisticsCalculator {
         return EntryStatistics(total: totalPrice, paid: paid, unPaid: unpaid, dailyAverage: dailyAverage)
     }
     // Метод для получения итоговой статистики без экспорта
-    func getStatistics(for items: [IncomeEntry]) -> DataSummary {
+    static func getStatistics(for items: [IncomeEntry]) -> DataSummary {
         return DataSummary(from: items)
     }
 

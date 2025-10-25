@@ -7,20 +7,18 @@
 import Foundation
 
 protocol GetStatisticsUseCase {
-    func execute(for items: [IncomeEntry]) -> DataSummary
+    func execute(for items: [IncomeEntry]) async throws -> DataSummary
 }
 
 final class GetStatisticsUseCaseImpl: GetStatisticsUseCase {
     private let incomeManager: IncomeManagerProtocol
-    private let statisticsCalculator: StatisticsCalculator
     
-    init(incomeManager: IncomeManagerProtocol, statisticsCalculator: StatisticsCalculator) {
+    init(incomeManager: IncomeManagerProtocol) {
         self.incomeManager = incomeManager
-        self.statisticsCalculator = statisticsCalculator
     }
     
-    func execute(for items: [IncomeEntry]) -> DataSummary {
-        let items = incomeManager.getAllItems()
-        return statisticsCalculator.getStatistics(for: items)
+    func execute(for items: [IncomeEntry]) async throws -> DataSummary {
+        let items = try await incomeManager.getAllItems()
+        return StatisticsCalculator.getStatistics(for: items)
     }
 }

@@ -7,7 +7,7 @@
 import Foundation
 
 protocol ArchiveManagerRepository {
-    func checkArchiveOnAppStart() async
+    func checkArchiveOnAppStart() async throws
     func loadItemsForPeriod(year: Int, month: Int) async -> Result<[IncomeEntry], ArchiveServiceError>
     func getAvailablePeriods() async -> [ArchivePeriod]
 }

@@ -7,6 +7,6 @@
 import Foundation
 
 protocol DateStoreRepository {
-    func loadLastKnownDate() async throws -> Date?
+    func loadLastKnownDate() async throws -> Date
     func saveLastKnownDate(_ date: Date) async throws
 }

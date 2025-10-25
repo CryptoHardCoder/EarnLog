@@ -7,9 +7,9 @@
 
 import Foundation
 
-final class DataFilter {
+enum DataFilter {
     
-    func getFilteredItems(from items: [IncomeEntry], for filter: TimeFilter, source: IncomeSource? = nil) -> [IncomeEntry] {
+    static func getFilteredItems(from items: [IncomeEntry], for filter: TimeFilter, source: IncomeSource? = nil) -> [IncomeEntry] {
         var calendar = Calendar.current
         calendar.firstWeekday = 2
         let nowDate = Date()
@@ -40,13 +40,22 @@ final class DataFilter {
         return finalFilteredItems.sorted { $0.date > $1.date }
     }
     
-    func getItemsForPeriod(items: [IncomeEntry], year: Int, month: Int) -> [IncomeEntry] {
+    static func getItemsForPeriod(items: [IncomeEntry], year: Int, month: Int) -> [IncomeEntry] {
         let calendar = Calendar.current
         
         return items.filter { item in
             let itemYear = calendar.component(.year, from: item.date)
             let itemMonth = calendar.component(.month, from: item.date)
             return itemYear == year && itemMonth == month
+        }
+    }
+    
+    static func getCurrentMonthItems(items: [IncomeEntry]) -> [IncomeEntry] {
+        let calendar = Calendar.current
+        let now = Date.now
+        
+        return items.filter { item in
+            calendar.isDate(item.date, equalTo: now, toGranularity: .month)
         }
     }
 }
