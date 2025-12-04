@@ -16,11 +16,8 @@ enum DataUpdateEvent {
     case statisticsNeedRefresh
 }
 
-/// Координатор для синхронизации данных между ViewModels
-/// Находится на Presentation слое и не нарушает чистоту архитектуры
 final class DataUpdateCoordinator {
-    
-    // Singleton для удобного доступа
+
     static let shared = DataUpdateCoordinator()
     
     // Publisher, на который подписываются все ViewModels
