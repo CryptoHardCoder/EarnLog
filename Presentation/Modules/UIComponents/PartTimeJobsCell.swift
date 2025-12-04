@@ -6,7 +6,7 @@
 //
 import UIKit
 
-final class PartTimeJobsCell: UITableViewCell, MemoryTrackable {
+final class PartTimeJobsCell: UITableViewCell{
     static let reuseIdentifier = "PartTimeJobsCell"
     
     private let label = UILabel()
@@ -16,7 +16,6 @@ final class PartTimeJobsCell: UITableViewCell, MemoryTrackable {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        trackCreation()  // для анализа memory leaks
         setupUI()
         setupLayout()
     }
@@ -81,7 +80,6 @@ final class PartTimeJobsCell: UITableViewCell, MemoryTrackable {
     }
     
     deinit{
-        trackDeallocation() // для анализа memory leaks
     }
 }
 

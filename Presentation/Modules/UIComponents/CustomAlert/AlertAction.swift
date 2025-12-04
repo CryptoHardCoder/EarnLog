@@ -21,11 +21,11 @@ struct AlertAction {
         var textColor: UIColor {
             switch self {
                 case .baseDefault:
-                    return .alwaysWhite
+                    return DSColors.AlertColors.Text.default
                 case .cancel:
-                    return .systemRed.withAlphaComponent(0.8)
+                    return DSColors.AlertColors.Text.cancel
                 case .destructive:
-                    return .systemRed
+                    return DSColors.AlertColors.Text.destructive
             }
         }
 
@@ -41,18 +41,20 @@ struct AlertAction {
         var buttonBorderColor: UIColor {
             switch self {
                 case .destructive:
-                    return .systemRed
+                    return DSColors.AlertColors.ButtonBorder.destructive
+                case .cancel:
+                    return DSColors.AlertColors.ButtonBorder.default
                 default:
-                    return .systemGray
+                    return .clear
             }
         }
 
         var buttonBackgroundColor: UIColor {
             switch self {
                 case .baseDefault:
-                    return .buttonDefault
+                    return DSColors.AlertColors.ButtonBackground.primary
                 default:
-                    return .alwaysWhite
+                    return DSColors.AlertColors.ButtonBackground.default
             }
         }
     }

@@ -5,10 +5,17 @@
 //  Created by M3 pro on 08/09/2025.
 //
 
-
 import UIKit
 
-class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
+protocol IncomesCellDisplayable {
+    var displayDate: Date { get }
+    var displayTitle: String { get }
+    var displayAmount: Double { get }
+    var displayStatus: Bool { get }
+    var displaySource: String { get }
+}
+
+class IncomeCollectionViewCell: UICollectionViewCell {
     static let reuseIdentifier = "IncomeCollectionViewCell"
 
     private let dateLabel = UILabel()
@@ -27,16 +34,15 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        trackCreation() //для анализа на memory leaks
         setupViews()
         setupConstraints()
     }
     
     private func setupViews() {
-        backgroundColor = .itemsBackground
+        backgroundColor = DSColors.cellsBackground
         layer.cornerRadius = 20
-        layer.shadowColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
-        layer.shadowOpacity = 0.5
+        layer.shadowColor = DSColors.shadowColor.cgColor
+        layer.shadowOpacity = 0.4
         layer.shadowRadius = 4
         layer.shadowOffset = CGSize(width: 0, height: 2)
         
@@ -47,13 +53,13 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         dateLabel.textColor = .systemGray
         dateLabel.font = .systemFont(ofSize: 14)
         
-        jobIdentityLabel.textColor = .designBlack
+        jobIdentityLabel.textColor = DSColors.appTextPrimary
         jobIdentityLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         jobIdentityLabel.lineBreakMode = .byTruncatingTail
         jobIdentityLabel.numberOfLines = 1
         jobIdentityLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
-        sourceLabel.textColor = .designBlack
+        sourceLabel.textColor = DSColors.appTextPrimary
         sourceLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         sourceLabel.textAlignment = .right
         sourceLabel.lineBreakMode = .byTruncatingTail
@@ -134,26 +140,26 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     // Добавляем переменную для отслеживания текущего режима
     private var currentSelectionMode: Bool?  // nil означает что режим еще не был установлен
     
-    func configure(with item: IncomeEntry, isSelectionMode: Bool = false, isSelected: Bool = false){
-    
-        let dateformatter = DateFormatter()
-        dateformatter.dateStyle = .medium
-        dateformatter.timeStyle = .none
-        
-        dateLabel.text = dateformatter.string(from: item.date)
-        jobIdentityLabel.text = item.jobTitle
-        sourceLabel.text = item.source.displayName
-        priceLabel.text = String(format: "%.0f zł", (item.price))
+    func configure(with displayable: IncomesCellDisplayable, isSelectionMode: Bool = false, isSelected: Bool = false){
 
-        if item.isPaid {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+        
+        dateLabel.text = dateFormatter.string(from: displayable.displayDate)
+        jobIdentityLabel.text = displayable.displayTitle
+        sourceLabel.text = displayable.displaySource
+        priceLabel.text = String(format: "%.0f zł", (displayable.displayAmount))
+
+        if displayable.displayStatus {
             statusPaymentLabel.text = "paid_for_cell".localized
-            statusPaymentLabel.textColor = .price
-            priceLabel.textColor = .price
+            statusPaymentLabel.textColor = DSColors.priceColor
+            priceLabel.textColor = DSColors.priceColor
 
         } else {
             statusPaymentLabel.text = "unPaid_for_cell".localized
-            statusPaymentLabel.textColor = .systemOrange
-            priceLabel.textColor = .systemOrange.withAlphaComponent(0.7)
+            statusPaymentLabel.textColor = DSColors.warning
+            priceLabel.textColor = DSColors.warning.withAlphaComponent(0.7)
         }
         
         // Переключаем layout если режим изменился ИЛИ устанавливается впервые
@@ -169,23 +175,25 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
         }
     }
     
-    func animateAppearance(delayMultiplier: Int = 0) {
-            
-            transform = CGAffineTransform(translationX: 0, y: bounds.height)
-            alpha = 0.0
+    func animate(delayMultiplier: Int = 0) {
 
-            UIView.animate(
-                withDuration: 0.3,
-                delay: 0.1 * Double(delayMultiplier), // увеличиваем задержку для последовательного появления
-                usingSpringWithDamping: 0.8,
-                initialSpringVelocity: 0.5,
-                options: [.curveEaseOut],
-                animations: {
-                    self.transform = .identity
-                    self.alpha = 1.0
-                }
-            )
-        }
+        transform = CGAffineTransform(translationX: 0, y: bounds.height)
+        alpha = 0.0
+
+
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0.1 * Double(delayMultiplier), // увеличиваем задержку для последовательного появления
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 0.5,
+            options: [.curveEaseOut],
+            animations: {
+                self.transform = .identity
+                self.alpha = 1.0
+            }
+        )
+
+    }
     
     private func updateLayoutForSelectionMode(_ isSelectionMode: Bool, isSelected: Bool) {
         if isSelectionMode {
@@ -226,12 +234,11 @@ class IncomeCollectionViewCell: UICollectionViewCell, MemoryTrackable {
     }
     
     deinit {
-        trackDeallocation()
     }
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    MainViewController()
-    
-}
+//@available(iOS 17.0, *)
+//#Preview {
+//    MainViewController()
+//    
+//}

@@ -4,7 +4,7 @@ import UIKit
 
 // MARK: - Ячейка таблицы
 
-class IncomeTableViewCell: UITableViewCell, MemoryTrackable {
+class IncomeTableViewCell: UITableViewCell{
     static let reuseIdentifier = "IncomeTableViewCell"
     private let dateLabel = UILabel()
     private let jobIdentityLabel = UILabel()
@@ -22,7 +22,6 @@ class IncomeTableViewCell: UITableViewCell, MemoryTrackable {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        trackCreation() //для анализа на memory leaks
         setupViews()
         setupConstraints()
     }
@@ -212,16 +211,15 @@ class IncomeTableViewCell: UITableViewCell, MemoryTrackable {
     
     
     deinit {
-        trackDeallocation()
     }
     
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    MainViewController()
-    
-}
+//@available(iOS 17.0, *)
+//#Preview {
+//    MainViewController()
+//    
+//}
 
 
 

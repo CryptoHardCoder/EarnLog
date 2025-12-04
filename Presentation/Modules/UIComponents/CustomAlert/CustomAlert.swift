@@ -8,20 +8,29 @@
 import Foundation
 import UIKit
 
-final class CustomAlert{
+final class CustomAlert {
     private let title: String
-    private let message: String
+    private var message: String?
     private var animationFile: LottieAnimationFiles?
+    private var textFieldText: String?
     private var actions: [AlertAction] = []
 
-    init(title: String, message: String) {
+    private var textFieldInputHandler: ((String) -> Void)?
+
+    init(title: String) {
         self.title = title
-        self.message = message
     }
 
     @discardableResult
-    func setLottieAnimationFile(_ file: LottieAnimationFiles) -> Self {
+    func withLottieAnimation(_ file: LottieAnimationFiles) -> Self {
         self.animationFile = file
+        return self
+    }
+    
+    @discardableResult
+    func withTextField(initialText: String = "", onInput: @escaping (String) -> Void) -> Self {
+        self.textFieldText = initialText
+        self.textFieldInputHandler = onInput
         return self
     }
 
@@ -32,19 +41,29 @@ final class CustomAlert{
     }
 
     func showAlert(from viewController: UIViewController) {
-        let alerVC = CustomAlertViewController(
+        let alertVC = CustomAlertViewController(
             alertTitle: title,
             alertMessage: message,
             lottieAnimationFile: animationFile,
+            textFieldText: textFieldText,
             actions: actions)
-        viewController.present(alerVC, animated: true)
+        alertVC.onTextFieldInput = textFieldInputHandler
+        viewController.present(alertVC, animated: true)
     }
 }
 
 extension CustomAlert {
-    convenience init(title: String, message: String, animationFile: LottieAnimationFiles?) {
-        self.init(title: title, message: message)
+
+    convenience init(title: String, message: String){
+        self.init(title: title)
+        self.message = message
+    }
+
+    convenience init(title: String, message: String, animationFile: LottieAnimationFiles) {
+        self.init(title: title)
+        self.message = message
         self.animationFile = animationFile
+        self.textFieldText = nil
     }
 }
 
