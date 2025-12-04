@@ -6,7 +6,7 @@
 //
 import Foundation
 
-protocol IncomeManagerProtocol {
+protocol IncomeManagerRepository {
         
     func getAllItems() async throws -> [IncomeEntry] 
     

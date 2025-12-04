@@ -147,6 +147,8 @@ xcuserdata
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 *.xcscheme
+!*..pbxproj
+*.xcbkptlist
 
 # End of https://www.toptal.com/developers/gitignore/api/swift,swiftpackagemanager,cocoapods,macos,xcode
 

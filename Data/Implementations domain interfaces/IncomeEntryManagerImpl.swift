@@ -8,7 +8,7 @@ import Foundation
 import CoreData
 
 // MARK: - IncomeEntryManagerImpl
-final class IncomeEntryManagerImpl: IncomeManagerProtocol, MemoryTrackable {
+final class IncomeEntryManagerImpl: IncomeManagerRepository {
     
     private let sideJobManager: SideJobManagerRepository
     private let dataManager: CoreDataManagerRepository

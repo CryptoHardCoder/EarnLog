@@ -7,17 +7,17 @@
 import Foundation
 
 // MARK: - Archive Manager
-final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
+final class ArchiveManagerImpl: ArchiveManagerRepository{
 
     // MARK: - Dependencies
-    private let incomeManager: IncomeManagerProtocol
+    private let incomeManager: IncomeManagerRepository
     private let dateStore: DateStoreRepository
     private let metadataService: ArchiveMetadataServiceRepository
 
     private let archiveService: ArchiveServiceRepository
     
     // MARK: - Initialization
-    init(incomeManager: IncomeManagerProtocol, dateStore: DateStoreRepository, metadataService: ArchiveMetadataServiceRepository, appPaths: AppPathsBuilderRepository, fileStorageService: FileStorageService, archiveService: ArchiveServiceRepository) {
+    init(incomeManager: IncomeManagerRepository, dateStore: DateStoreRepository, metadataService: ArchiveMetadataServiceRepository, appPaths: AppPathsBuilderRepository, fileStorageService: FileStorageService, archiveService: ArchiveServiceRepository) {
         self.incomeManager = incomeManager
         self.dateStore = dateStore
         self.metadataService = metadataService
@@ -25,7 +25,7 @@ final class ArchiveManagerImpl: ArchiveManagerRepository, MemoryTrackable {
     }
     
     deinit {
-        trackDeallocation()
+        
     }
     
     // MARK: - Public Interface

@@ -11,9 +11,9 @@ protocol GetAllItemsUseCase {
 }
 
 final class GetAllItemsUseCaseImpl: GetAllItemsUseCase {
-    private let incomeManager: IncomeManagerProtocol
+    private let incomeManager: IncomeManagerRepository
     
-    init(incomeManager: IncomeManagerProtocol) {
+    init(incomeManager: IncomeManagerRepository) {
         self.incomeManager = incomeManager
     }
     

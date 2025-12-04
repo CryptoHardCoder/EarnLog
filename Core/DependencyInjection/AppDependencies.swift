@@ -19,45 +19,59 @@ class AppDependencies {
         SideJobManagerImpl(dataManager: dataManager)
     }()
     
-    private lazy var incomeManager: IncomeManagerProtocol = {
+    private lazy var incomeManager: IncomeManagerRepository = {
         IncomeEntryManagerImpl(sideJobManager: sideJobManager, dataManager: dataManager)
     }()
-    
-    //MARK: - Use Cases
-    //MARK: - GoalUseCases
-    private lazy var userMonthlyGoalUseCase: UserMonthlyGoalUseCase = {
-        UserMonthlyGoalUseCaseImpl()
+
+    private lazy var userManager: UserManagerRepository = {
+        UserManagerImpl()
     }()
-    
-    //MARK: - ItemUseCases
-    private lazy var getAllItemsUseCase: GetAllItemsUseCase = {
+
+    //MARK: - Use Cases
+    //MARK: - UserUseCases
+    lazy var userMonthlyGoalUseCase: GetUserMonthlyGoalUseCase = {
+        GetUserMonthlyGoalUseCaseImpl(userManager: userManager)
+    }()
+
+    lazy var getUserInfoUseCase: GetUserInfoUseCase = {
+        GetUserInfoUseCaseImpl(userManager: userManager)
+    }()
+
+    lazy var updateUserNameUseCase: UpdateUserNameUseCase = {
+        UpdateUserNameUseCaseImpl(userManager: userManager)
+    }()
+
+    lazy var updateUserEmailUseCase: UpdateUserEmailUseCase = {
+        UpdateUserEmailUseCaseImpl(userManager: userManager)
+    }()
+
+    lazy var updateUserPasswordUseCase: UpdateUserPasswordUseCase = {
+        UpdateUserPasswordUseCaseImpl(userManager: userManager)
+    }()
+
+    lazy var setUserMonthlyGoalUseCase: SetUserMonthlyGoalUseCase = {
+        SetUserMonthlyGoalUseCaseImpl(userManager: userManager)
+    }()
+
+
+    //MARK: - IncomeUseCases
+    lazy var getAllItemsUseCase: GetAllItemsUseCase = {
         GetAllItemsUseCaseImpl(incomeManager: incomeManager)
     }()
     
-    private lazy var saveItemUseCase: SaveItemUseCase = {
+    lazy var saveItemUseCase: SaveItemUseCase = {
         SaveItemUseCaseImpl(incomeManager: incomeManager)
     }()
     
-    private lazy var getCurrentMonthItemsUseCase: GetCurrentMonthItemsUseCase = {
+    lazy var getCurrentMonthItemsUseCase: GetCurrentMonthItemsUseCase = {
        GetCurrentMonthItemsUseCaseImpl(incomeManager: incomeManager) 
     }()
     
     //MARK: - SideJobsUseCases
-    private lazy var getActiveSideJobsUseCase: GetActiveSideJobsUseCase = {
+    lazy var getActiveSideJobsUseCase: GetActiveSideJobsUseCase = {
         GetActiveSideJobsUseCaseImpl(sideJobsManager: sideJobManager)
     }()
-    
-    
-    // ViewModels
-    lazy var mainViewModel: MainViewModel = {
-        MainViewModel(getCurrentMonthItemsUseCase: getCurrentMonthItemsUseCase, 
-                      userMonthlyGoalUseCase: userMonthlyGoalUseCase)
-    }()
-    
-    lazy var addIncomeViewModel: AddIncomeViewModel = {
-        AddIncomeViewModel(getAllActiveSideJobsUseCase: getActiveSideJobsUseCase, 
-                           saveItemUseCase: saveItemUseCase)
-    }()
+
     
     private init(){}
 }

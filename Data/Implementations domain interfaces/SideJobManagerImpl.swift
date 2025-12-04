@@ -7,7 +7,7 @@
 import Foundation
 import CoreData
 
-class SideJobManagerImpl: SideJobManagerRepository, MemoryTrackable{
+class SideJobManagerImpl: SideJobManagerRepository{
     
     let dataManager: CoreDataManagerRepository
     
